@@ -1,5 +1,6 @@
 import type { Decree, GameState, Ministry, Region } from "@/types/game";
 import { generateMap } from "@/utils/mapGenerator";
+import { enterpriseTypes } from "@/data/industry";
 const generatedMap = generateMap();
 
 const regionShapes = generatedMap.playerRegions.map((region) => region.path);
@@ -172,4 +173,6 @@ export const initialWorld: GameState = {
   constructions: [],
   offlineSummary: null,
   hydrated: false,
+  enterprises: [], enterpriseTypes, workforce: 30000000, unemployed: 1800000, specialists: 420000,
+  eventElapsedSeconds: 0, nextEventInSeconds: 240, activeEvent: null, modifiers: [],
 };

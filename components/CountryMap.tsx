@@ -156,7 +156,7 @@ export default function CountryMap({
               {activeId === shape.id ? <path d={shape.path} fill="#2A6076" fillOpacity=".32" stroke="#7DD3FC" strokeWidth="2.5" vectorEffect="non-scaling-stroke"/> : null}
               <circle cx={city.x} cy={city.y} r={capital ? 10 : 7} fill="#F5C96B" stroke="#FFF0B8" strokeWidth="2"/>
               {capital ? <><circle cx={city.x} cy={city.y} r="16" fill="none" stroke="#F5C96B" strokeWidth="2.4" className="capital-ring"/><circle cx={city.x} cy={city.y} r="23" fill="none" stroke="#F5C96B" strokeOpacity=".7" strokeWidth="1.5" className="capital-ring capital-ring-delay"/></> : null}
-              {lod >= 2 || capital ? <text x={city.x} y={city.y + 18} textAnchor="middle" fill="#F8FAFC" fontSize="24" fontWeight="600"
+              {lod >= 2 || capital ? <text x={city.x} y={city.y + 18} textAnchor="middle" fill="#F8FAFC" fontSize="9.5" fontWeight="600"
                 stroke="#060911" strokeWidth="8" paintOrder="stroke">{region.city}</text> : null}
             </g>;
           })}
