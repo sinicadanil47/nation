@@ -205,7 +205,7 @@ export default function PresidentDrawer({
                   type="button"
                   disabled={
                     law.passed ||
-                    votes <= game.parliament.totalSeats / 2 ||
+                    votes <= game.parliament.totalSeats / 2
                   }
                   onClick={() => onVoteLaw(law.id)}
                   className="min-h-9 shrink-0 rounded-lg bg-emerald-700 px-3 text-[10px] font-bold disabled:bg-slate-700"
