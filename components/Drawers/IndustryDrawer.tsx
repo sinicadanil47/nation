@@ -1,179 +1,29 @@
 "use client";
-
-import { useMemo, useState } from "react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { ReactNode } from "react";
-import { Plus, Wrench } from "lucide-react";
+import {useMemo,useState} from "react";
+import {Plus,Wrench,Server,Cog,Factory,Zap,FlaskConical,Wheat,Pill,Truck,Cpu,Boxes,Pickaxe,Building2} from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
-import NationIllustration from "@/components/Illustrations";
-import type { GameState } from "@/types/game";
-
-function AdvisorCard({ children, tone = "neutral" }: {
-  children: ReactNode;
-  tone?: "positive" | "warning" | "neutral";
-}) {
-  const style = tone === "positive"
-    ? "border-emerald-500/25 bg-emerald-500/10"
-    : tone === "warning"
-      ? "border-rose-500/25 bg-rose-500/10"
-      : "border-cyan-500/20 bg-cyan-500/10";
-  return (
-    <aside className={`advisor-card rounded-xl border p-3 transition-all duration-200 ${style}`}>
-      <p className="mb-1 text-[9px] font-bold uppercase tracking-[.14em] text-slate-400">Советник промышленности</p>
-      <div className="text-[11px] leading-relaxed text-slate-200">{children}</div>
-    </aside>
-  );
-}
-
-export default function IndustryDrawer({
-  game,
-  onClose,
-  onBuild,
-  onRepair,
-}: {
-  game: GameState;
-  onClose: () => void;
-  onBuild: (typeId: string, regionId: string) => void;
-  onRepair: () => void;
-}) {
-  const [typeId, setType] = useState(game.enterpriseTypes[0]?.id ?? "");
-  const [enterpriseListRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
-  const [regionId, setRegion] = useState(game.regions[0]?.id ?? "");
-  const type = game.enterpriseTypes.find((item) => item.id === typeId);
-  const region = game.regions.find((item) => item.id === regionId);
-  const count = game.enterprises.filter((enterprise) => enterprise.typeId === typeId).length;
-  const cost = type ? type.buildCost * Math.pow(1.1, count) : 0;
-  const wear = game.enterprises.length
-    ? game.enterprises.reduce((total, enterprise) => total + enterprise.wear, 0) / game.enterprises.length
-    : 0;
-  const repairCost = game.enterprises.reduce((total, enterprise) => total + enterprise.wear * 0.22, 0);
-  const unemployment = game.workforce > 0 ? (game.unemployed / game.workforce) * 100 : 0;
-  const jobs = game.enterprises.reduce(
-    (total, enterprise) => total + (game.enterpriseTypes.find((item) => item.id === enterprise.typeId)?.jobs ?? 0),
-    0,
-  );
-  const staffing = type && unemployment < 2
-    ? Math.min(1, game.specialists / Math.max(1, type.jobs))
-    : 1;
-  const specializationBonus = Boolean(type && region && region.specialization === type.specialization);
-  const projectedHourly = type
-    ? type.incomePerSecond * 3600 * (specializationBonus ? 1.2 : 1) * staffing
-    : 0;
-  const wornFacilities = game.enterprises.filter((enterprise) => enterprise.wear >= 35).length;
-
-  const advisor = useMemo(() => {
-    if (wornFacilities > 0) {
-      return {
-        tone: "warning" as const,
-        text: `${wornFacilities} предприятий имеют износ от 35%. Ремонт за ${repairCost.toFixed(2)} млрд восстановит их производительность и уменьшит потерю дохода.`,
-      };
-    }
-    if (unemployment < 2 && type && staffing < 0.9) {
-      return {
-        tone: "warning" as const,
-        text: `Дефицит специалистов ограничит загрузку нового ${type.name.toLowerCase()}. Дождитесь подготовки кадров или выберите предприятие с меньшей потребностью в персонале.`,
-      };
-    }
-    if (type && specializationBonus) {
-      return {
-        tone: "positive" as const,
-        text: `Регион специализируется на направлении «${type.specialization}»: предприятие получит +20% к доходу. Прогноз — +${projectedHourly.toFixed(2)} млрд/ч до учёта общесистемных коэффициентов.`,
-      };
-    }
-    return {
-      tone: "neutral" as const,
-      text: "Сопоставьте специализацию предприятия и региона. Совпадение даёт +20% к выпуску без дополнительных затрат на строительство.",
-    };
-  }, [wornFacilities, repairCost, unemployment, type, staffing, specializationBonus, projectedHourly]);
-
-  return (
-    <BottomSheet title="Промышленность" onClose={onClose}>
-      <NationIllustration variant="industry" className="mb-4 h-[92px] w-full" />
-      <div className="grid grid-cols-2 gap-2">
-        <div className="stat-card"><span>Предприятий</span><strong className="tabular-nums">{game.enterprises.length}</strong></div>
-        <div className="stat-card"><span>Средний износ</span><strong className={`tabular-nums ${wear >= 25 ? "text-rose-400" : "text-emerald-400"}`}>{wear.toFixed(1)}%</strong></div>
-      </div>
-      <div className="progress-track mt-3 h-2">
-        <div className="transition-all duration-200" style={{ width: `${wear}%`, background: wear >= 35 ? "#fb7185" : "#34d399" }} />
-      </div>
-      <p className="mt-2 text-[10px] leading-relaxed text-slate-400">
-        Износ увеличивается на 0,5% за реальный час; доход предприятия уменьшается пропорционально.
-      </p>
-      <button
-        type="button"
-        disabled={!game.enterprises.length || repairCost > game.budget.treasury}
-        onClick={onRepair}
-        className="action-secondary mt-3 w-full transition-all duration-200 disabled:opacity-40"
-      >
-        <Wrench size={14} /> Отремонтировать всё · <span className="tabular-nums">{repairCost.toFixed(2)} млрд</span>
-      </button>
-
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <div className="stat-card"><span>Занято в промышленности</span><strong className="tabular-nums">{jobs.toLocaleString("ru-RU")}</strong></div>
-        <div className="stat-card"><span>Безработица</span><strong className="tabular-nums">{unemployment.toFixed(2)}%</strong></div>
-      </div>
-
-      <label className="mt-4 block text-[10px] font-semibold text-slate-400">Предприятие</label>
-      <select value={typeId} onChange={(event) => setType(event.target.value)} className="mt-1 w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-xs text-slate-100">
-        {([
-          ["digital", "Цифра и ИТ"],
-          ["basic", "Базовая промышленность"],
-          ["engineering", "Машиностроение"],
-          ["consumer", "Потребительский и медсектор"],
-        ] as const).map(([sector, label]) => (
-          <optgroup key={sector} label={label}>
-            {game.enterpriseTypes.filter((item) => item.sector === sector).map((item) => (
-              <option key={item.id} value={item.id}>{item.name}</option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
-
-      <label className="mt-3 block text-[10px] font-semibold text-slate-400">Регион</label>
-      <select value={regionId} onChange={(event) => setRegion(event.target.value)} className="mt-1 w-full rounded-xl border border-white/10 bg-slate-900 p-3 text-xs text-slate-100">
-        {game.regions.map((item) => (
-          <option key={item.id} value={item.id}>{item.name} · {item.specialization}</option>
-        ))}
-      </select>
-
-      {type ? (
-        <div className="stat-card mt-3 border border-emerald-500/15 bg-gradient-to-br from-emerald-950/20 to-[#111925] transition-all duration-200">
-          <strong>{type.name}</strong>
-          <span>{type.description}</span>
-          <span>Строительство: <b className="tabular-nums text-rose-400">−{cost.toFixed(1)} млрд</b></span>
-          <span>Прогноз дохода: <b className="tabular-nums text-emerald-400">+{projectedHourly.toFixed(2)} млрд/ч</b></span>
-          <span>Энергия: {type.energyMW} МВт · Рабочие места: {type.jobs}</span>
-          {specializationBonus ? <span className="text-emerald-300">Бонус специализации +20%</span> : null}
-          {unemployment < 2 && staffing < 1 ? <span className="text-rose-300">Кадровый штраф: загрузка {(staffing * 100).toFixed(0)}%</span> : null}
-          <button
-            type="button"
-            disabled={game.budget.treasury < cost}
-            onClick={() => onBuild(typeId, regionId)}
-            className="action-primary mt-2 w-full transition-all duration-200 disabled:opacity-40"
-          >
-            <Plus size={14} /> Построить
-          </button>
-        </div>
-      ) : null}
-
-      <div className="mt-3">
-        <AdvisorCard tone={advisor.tone}>{advisor.text}</AdvisorCard>
-      </div>
-
-      <div ref={enterpriseListRef} className="mt-3 space-y-2">
-        {game.enterprises.map((enterprise) => (
-          <div key={enterprise.id} className="stat-card transition-all duration-200">
-            <div className="flex w-full items-center justify-between gap-2">
-              <strong className="min-w-0 break-words">{enterprise.name}</strong>
-              <span className={`shrink-0 rounded-md border px-2 py-1 text-[9px] tabular-nums ${enterprise.wear >= 35
-                ? "border-rose-500/30 bg-rose-500/15 text-rose-400"
-                : "border-emerald-500/30 bg-emerald-500/15 text-emerald-400"}`}>
-                {enterprise.wear >= 35 ? "−" : "+"}{enterprise.wear.toFixed(1)}% износа
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </BottomSheet>
-  );
+import type {GameState,EnterpriseType,Region} from "@/types/game";
+import {getEnterpriseBuildCost} from "@/utils/industryPricing";
+const sector:Record<string,string>={digital:"Дата-центры",basic:"Металлургия и химия",engineering:"Машиностроение",consumer:"Агропром и фармацевтика / биотех"};
+const icons:Record<string,typeof Server>={datacenter:Server,outsourcing:Cpu,lithium:Pickaxe,metallurgy:Factory,chemical:FlaskConical,drones:Boxes,machine_tools:Cog,heavy:Building2,pharma:Pill,agro:Wheat,power_grid:Zap,logistics_hub:Truck};
+const score=(r:Region,t:EnterpriseType)=>(r.specialization===t.specialization?40:0)+r.infrastructure*3+r.economy*2+r.freeLand*.15;
+const reason=(r:Region,t:EnterpriseType)=>[r.specialization===t.specialization?`профиль «${r.specialization}» совпадает (+20% к доходу)`:null,r.infrastructure>=4?"развитая инфраструктура":null,r.economy>=4?"сильная экономика":null,r.freeLand>=30?"достаточно свободной земли":null].filter(Boolean).join(" · ")||r.specialization;
+const payback=(h:number)=>!Number.isFinite(h)||h<=0?"Нет прогноза":h<1?`~${Math.max(1,Math.round(h*60))} мин`:h<48?`~${h.toFixed(1)} ч`:`~${(h/24).toFixed(1)} дн.`;
+export default function IndustryDrawer({game,onClose,onBuild,onRepair}:{game:GameState;onClose:()=>void;onBuild:(typeId:string,regionId:string)=>void;onRepair:()=>void}){
+ const[typeId,setType]=useState(game.enterpriseTypes[0]?.id??""),[regionId,setRegion]=useState(game.regions[0]?.id??"");
+ const type=game.enterpriseTypes.find(x=>x.id===typeId),region=game.regions.find(x=>x.id===regionId),purchases=game.enterprises.length,cost=type?getEnterpriseBuildCost(type.buildCost,purchases):0;
+ const wear=game.enterprises.length?game.enterprises.reduce((a,e)=>a+e.wear,0)/game.enterprises.length:0,repairCost=game.enterprises.reduce((a,e)=>a+e.wear*.22,0),unemployment=game.workforce?game.unemployed/game.workforce*100:0;
+ const jobs=game.enterprises.reduce((a,e)=>a+(game.enterpriseTypes.find(t=>t.id===e.typeId)?.jobs??0),0),staff=type&&unemployment<2?Math.min(1,game.specialists/Math.max(1,type.jobs)):1,special=!!(type&&region&&region.specialization===type.specialization),income=type?type.incomePerSecond*3600*(special?1.2:1)*staff:0;
+ const ordered=useMemo(()=>type?[...game.regions].sort((a,b)=>score(b,type)-score(a,type)):game.regions,[game.regions,type]),best=ordered[0];
+ const sectorLabel=(item:EnterpriseType)=>item.id==="power_grid"?"Энергетика":item.id==="logistics_hub"?"Логистика и транспорт":sector[item.sector]??item.sector;
+ return <BottomSheet title="Промышленность и отрасли" onClose={onClose}>
+ <div className="grid grid-cols-2 gap-2"><div className="stat-card"><span>Предприятий</span><strong>{game.enterprises.length}</strong></div><div className="stat-card"><span>Износ</span><strong className={wear>=25?"text-rose-400":"text-emerald-400"}>{wear.toFixed(1)}%</strong></div><div className="stat-card"><span>Покупок</span><strong>{purchases}</strong></div><div className="stat-card"><span>Коэффициент</span><strong className="text-amber-300">×{Math.pow(1.1,purchases).toFixed(2)}</strong></div></div>
+ <p className="mt-3 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.06] p-3 text-[10px] text-slate-300">После каждой покупки цена <b className="text-amber-300">всех отраслей</b> повышается на 10%: базовая цена × 1,1 в степени числа предыдущих покупок.</p>
+ <h3 className="mt-4 text-xs font-bold uppercase text-slate-300">Выберите отрасль</h3><div className="mt-2 grid grid-cols-2 gap-2">{game.enterpriseTypes.map(item=>{const Icon=icons[item.id]??Factory;return <button key={item.id} type="button" onClick={()=>setType(item.id)} className={`rounded-xl border p-3 text-left ${typeId===item.id?"border-cyan-400/50 bg-cyan-400/10":"border-white/[0.08] bg-slate-900/60"}`}><Icon size={20} className="mb-2 text-cyan-200"/><b className="block text-[11px]">{item.name}</b><span className="mt-1 block text-[9px] text-slate-500">{sectorLabel(item)}</span><span className="mt-2 block text-[10px] tabular-nums text-amber-300">{getEnterpriseBuildCost(item.buildCost,purchases).toFixed(1)} млрд</span></button>})}</div>
+ {type?<><h3 className="mt-4 text-xs font-bold uppercase text-slate-300">Выбор региона · лучший: {best?.name}</h3><div className="mt-2 space-y-2">{ordered.map(r=><button key={r.id} type="button" onClick={()=>setRegion(r.id)} className={`w-full rounded-xl border p-3 text-left ${regionId===r.id?"border-cyan-400/50 bg-cyan-400/10":r.id===best?.id?"border-emerald-500/30 bg-emerald-500/5":"border-white/10 bg-slate-900/40"}`}><b className="text-xs">{r.name}</b><span className="mt-1 block text-[9px] text-slate-400">{reason(r,type)}</span><span className="mt-1 block text-[9px] text-slate-500">Инфраструктура {r.infrastructure}/10 · Экономика {r.economy}/10 · Земля {r.freeLand}% {r.id===best?.id?" · Рекомендуется":""}</span></button>)}</div>
+ <div className="stat-card mt-3"><b>{type.name}</b><span>{type.description}</span><div className="mt-2 grid grid-cols-2 gap-2"><div><span>Стоимость</span><strong className="block text-lg text-rose-300">−{cost.toFixed(1)} млрд</strong></div><div><span>Доход / час</span><strong className="block text-lg text-emerald-300">+{income.toFixed(2)} млрд</strong></div><div><span>Окупаемость</span><strong className="block text-sm text-amber-300">{payback(income>0?cost/income:Infinity)}</strong></div><div><span>Рабочие места / энергия</span><strong className="block text-sm">{type.jobs} · {type.energyMW} МВт</strong></div></div>{special?<p className="text-[10px] text-emerald-300">Бонус специализации +20%</p>:null}<button type="button" disabled={!region||game.budget.treasury<cost} onClick={()=>onBuild(typeId,regionId)} className="action-primary mt-3 w-full disabled:opacity-40"><Plus size={14}/> Построить · {region?.name}</button></div></>:null}
+ <button type="button" disabled={!game.enterprises.length||repairCost>game.budget.treasury} onClick={onRepair} className="action-secondary mt-3 w-full disabled:opacity-40"><Wrench size={14}/> Ремонт · {repairCost.toFixed(2)} млрд</button>
+ <div className="mt-3 grid grid-cols-2 gap-2"><div className="stat-card"><span>Занято</span><strong>{jobs.toLocaleString("ru-RU")}</strong></div><div className="stat-card"><span>Безработица</span><strong>{unemployment.toFixed(2)}%</strong></div></div>
+ <div className="mt-3 space-y-2">{game.enterprises.map((e,index)=>{const t=game.enterpriseTypes.find(x=>x.id===e.typeId),r=game.regions.find(x=>x.id===e.regionId),inc=t?t.incomePerSecond*3600*(r?.specialization===t.specialization?1.2:1)*(1-e.wear/100):0,invest=t?getEnterpriseBuildCost(t.buildCost,index):0;return <div key={e.id} className="stat-card"><b>{e.name}</b><span>{r?.name} · вложено {invest.toFixed(1)} млрд</span><span className="text-[10px] text-emerald-300">Доход {inc.toFixed(2)} млрд/ч · окупаемость {payback(inc>0?invest/inc:Infinity)}</span></div>})}</div>
+ </BottomSheet>;
 }
