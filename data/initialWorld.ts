@@ -2,7 +2,7 @@ import type { Decree, GameState, Ministry, Region } from "@/types/game";
 import { generateMap } from "@/utils/mapGenerator";
 const generatedMap = generateMap();
 
-const regionShapes = generatedMap.regions;
+const regionShapes = generatedMap.playerRegions.map((region) => region.path);
 
 const regionNames = [
   "Северный край",
