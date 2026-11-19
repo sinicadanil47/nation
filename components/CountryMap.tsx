@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LocateFixed, Minus, Plus } from "lucide-react";
 import type { PointerEvent, WheelEvent } from "react";
-import type { Region } from "@/types/game";
+import type { ForeignCountry, Region } from "@/types/game";
 import { generateMap } from "@/utils/mapGenerator";
 import type { GeneratedCountry, MapPoint } from "@/utils/mapGenerator";
 
@@ -12,12 +12,13 @@ const world = generateMap();
 const distance = (a: Pointer, b: Pointer) => Math.hypot(a.x - b.x, a.y - b.y);
 
 export default function CountryMap({
-  regions, activeId, selectedCountryId, onSelect, onSelectCountry,
+  regions, activeId, selectedCountryId, foreignCountries, onSelect, onSelectCountry,
 }: {
-  regions: Region[]; activeId: string | null; selectedCountryId: string | null;
+  regions: Region[]; activeId: string | null; selectedCountryId: string | null; foreignCountries: ForeignCountry[];
   onSelect: (region: Region) => void; onSelectCountry: (country: GeneratedCountry) => void;
 }) {
   const [view, setView] = useState({ x: 0, y: 0, zoom: 1 });
+  const [mapMode, setMapMode] = useState<"political" | "relations">("political");
   const viewRef = useRef(view);
   const pointers = useRef(new Map<number, Pointer>());
   const starts = useRef(new Map<number, GestureStart>());
@@ -132,7 +133,7 @@ export default function CountryMap({
         <g transform={`translate(${view.x} ${view.y}) translate(${world.width / 2} ${world.height / 2}) scale(${view.zoom}) translate(-${world.width / 2} -${world.height / 2})`}>
           {world.cells.filter(cell => cell.owner === "foreign").map(cell => (
             <path key={cell.id} data-country-id={cell.countryId} d={cell.path}
-              fill={selectedCountryId === cell.countryId ? "#263D53" : cell.fill}
+              fill={selectedCountryId === cell.countryId ? "#263D53" : mapMode === "relations" ? (() => { const name = world.countries.find(country => country.id === cell.countryId)?.name; const relation = foreignCountries.find(country => country.name === name)?.relations ?? 0; return relation < 0 ? `rgb(${Math.round(145 + Math.abs(relation) * .9)}, ${Math.round(48 + (100 + relation) * .12)}, 65)` : `rgb(${Math.round(35 + (100 - relation) * .55)}, ${Math.round(105 + relation * .9)}, ${Math.round(75 + relation * .35)})`; })() : cell.fill}
               stroke={cell.fill} strokeWidth="1.8" strokeLinejoin="round"/>
           ))}
           <path d={boundaryPaths.foreign} fill="none" stroke="#1E293B" strokeWidth="2.1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>
@@ -162,6 +163,7 @@ export default function CountryMap({
           })}
         </g>
       </svg>
+      <div className="absolute left-1/2 top-[258px] z-20 flex -translate-x-1/2 rounded-xl border border-slate-600 bg-slate-950/90 p-1 shadow-lg" onPointerDown={event => event.stopPropagation()}><button type="button" onClick={() => setMapMode("political")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "political" ? "bg-cyan-600 text-white" : "text-slate-400"}`}>Политическая</button><button type="button" onClick={() => setMapMode("relations")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "relations" ? "bg-emerald-700 text-white" : "text-slate-400"}`}>Отношения</button></div>
       <div className="map-controls absolute bottom-28 right-4 z-20 flex flex-col gap-2" onPointerDown={event => event.stopPropagation()}>
         <button aria-label="Приблизить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom * 1.2)}><Plus/></button>
         <button aria-label="Отдалить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom / 1.2)}><Minus/></button>

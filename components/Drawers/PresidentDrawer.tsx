@@ -18,10 +18,12 @@ export default function PresidentDrawer({
   onPublishAddress,
 }: Props) {
   const [address, setAddress] = useState("");
+  const [section, setSection] = useState<"president"|"parliament">("president");
+  const votes = game.parliament.factions.reduce((sum, faction) => sum + faction.seats * faction.loyalty / 100, 0);
   const formatCooldown = (seconds: number) => String(Math.floor(seconds / 60)).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
 
   return (
-    <BottomSheet title="Офис Президента" onClose={onClose}>
+    <BottomSheet title="Власть" onClose={onClose}><div className="mb-4 grid grid-cols-2 gap-2"><button type="button" onClick={()=>setSection("president")} className={`min-h-10 rounded-lg text-xs font-bold ${section==="president"?"bg-cyan-700":"bg-slate-800 text-slate-400"}`}>Президент</button><button type="button" onClick={()=>setSection("parliament")} className={`min-h-10 rounded-lg text-xs font-bold ${section==="parliament"?"bg-cyan-700":"bg-slate-800 text-slate-400"}`}>Парламент</button></div>{section==="president"?<>
       <div className="mb-4 rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-3">
         <div className="flex flex-col items-start gap-1">
           <span className="text-xs text-slate-400">Рейтинг правительства</span>
@@ -111,7 +113,7 @@ export default function PresidentDrawer({
         >
           Опубликовать обращение
         </button>
-      </div>
+      </div></>:<div className="space-y-3"><section className="rounded-xl border border-slate-700 bg-slate-900/50 p-3"><div className="flex justify-between text-xs"><b>Распределение 450 мест</b><b>{game.parliament.totalSeats}</b></div><div className="mt-3 flex h-4 overflow-hidden rounded-full bg-slate-800">{game.parliament.factions.map((f,i)=><div key={f.id} title={f.name} style={{width:`${f.seats/450*100}%`}} className={i%2?"bg-indigo-500":"bg-cyan-500"}/>)}</div>{game.parliament.factions.map(f=><div key={f.id} className="mt-3"><div className="flex justify-between text-xs"><span>{f.name} · {f.seats} мест</span><b>{f.loyalty}%</b></div><div className="mt-1 flex gap-2"><button type="button" disabled={f.loyalty>=100||game.budget.treasury<7.5} onClick={()=>gameActions.negotiateFaction(f.id,5)} className="rounded-md bg-slate-800 px-2 py-2 text-[10px] disabled:opacity-40">Торг +5 · 7,5 млрд</button><button type="button" disabled={f.loyalty<5||game.budget.treasury<7.5} onClick={()=>gameActions.negotiateFaction(f.id,-5)} className="rounded-md bg-slate-800 px-2 py-2 text-[10px] disabled:opacity-40">Снизить поддержку</button></div></div>)}</section><section className="rounded-xl border border-slate-700 p-3"><div className="flex justify-between text-xs"><b>Голоса за законопроекты</b><b className={votes>225?"text-emerald-300":"text-amber-300"}>{Math.floor(votes)} / 450</b></div><div className="mt-2 h-2 overflow-hidden rounded bg-slate-800"><div className="h-full bg-emerald-500" style={{width:`${votes/450*100}%`}}/></div><p className="mt-2 text-[10px] text-slate-500">Для принятия требуется строго более 225 голосов.</p></section>{game.parliament.laws.map(law=><article key={law.id} className="rounded-xl border border-slate-700 bg-slate-900/40 p-3"><div className="flex items-start justify-between gap-2"><div><b className="text-xs">{law.name}</b><p className="mt-1 text-[10px] text-slate-400">{law.description}</p><p className="mt-1 text-[10px] text-slate-500">Цена: {law.cost} млрд</p></div><button type="button" disabled={law.passed||votes<=225||game.budget.treasury<law.cost} onClick={()=>gameActions.voteLaw(law.id)} className="min-h-9 shrink-0 rounded-lg bg-emerald-700 px-3 text-[10px] font-bold disabled:bg-slate-700">{law.passed?"Принят":"Голосовать"}</button></div></article>)}</div>
     </BottomSheet>
   );
 }
