@@ -11,7 +11,8 @@ export interface MapCell {
   fill: string;
   centroid: MapPoint;
   area: number;
-  neighbors: number[];\n  siteIndex: number;
+  neighbors: number[];
+  siteIndex: number;
 }
 export interface PlayerMapRegion { id: string; path: string; centroid: MapPoint; area: number }
 export interface GeneratedCountry extends (typeof worldCountries)[number] {
