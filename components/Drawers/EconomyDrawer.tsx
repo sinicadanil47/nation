@@ -58,11 +58,18 @@ export default function EconomyDrawer({
   const regionalIncome = game.regions.reduce((total, region) => total + region.incomePerHour, 0);
 
   const forecast = useMemo(() => {
+    // The VAT forecast follows a Laffer-style curve: zero VAT means zero VAT
+    // receipts; the demand response then reduces the tax base at high rates.
+    // Other tax rates shift the preferred VAT band without changing simulation time.
+    const nonVatPressure = (game.taxes.income + game.taxes.profit) / 2;
+    const targetPeak = Math.max(10, Math.min(22, 16 - (nonVatPressure - 20) * 0.12));
     return Array.from({ length: 46 }, (_, vat) => {
       const pressure = (vat + game.taxes.income + game.taxes.profit) / 3;
-      const shadow = Math.max(5, Math.min(55, 18 + (pressure - 17.7) * 0.85));
+      const shadow = Math.max(5, Math.min(55, 6 + Math.max(0, pressure - 8) * 1.25));
       const collection = Math.max(45, Math.min(98, 100 - shadow * 0.778));
-      const revenue = regionalIncome * (collection / 86) * (1 - (shadow - 18) / 180);
+      const demandFactor = Math.exp(-vat / targetPeak);
+      const shadowFactor = Math.max(0.35, 1 - (shadow - 5) / 110);
+      const revenue = regionalIncome * (vat / 100) * demandFactor * (collection / 86) * shadowFactor;
       return { vat, shadow, revenue };
     });
   }, [game.taxes.income, game.taxes.profit, regionalIncome]);
@@ -94,6 +101,7 @@ export default function EconomyDrawer({
       currentX: x(game.taxes.vat),
       currentY: revenueY(current.revenue),
       optimumX: x(optimum.vat),
+      optimumY: revenueY(optimum.revenue),
       optimumVat: optimum.vat,
       minRevenue,
       maxRevenue,
@@ -155,7 +163,7 @@ export default function EconomyDrawer({
               <path d={chart.shadowPath} fill="none" stroke="#fb7185" strokeWidth="1.8" strokeDasharray="4 4" strokeLinecap="round" className="chart-path" />
               <line x1={chart.currentX} x2={chart.currentX} y1="8" y2="114" stroke="#e2e8f0" strokeOpacity=".5" strokeDasharray="3 4" />
               <circle cx={chart.currentX} cy={chart.currentY} r="5" fill="#34d399" stroke="#ecfdf5" strokeWidth="1.5" className="chart-point" />
-              <circle cx={chart.optimumX} cy="112" r="3" fill="#fbbf24" />
+              <circle cx={chart.optimumX} cy={chart.optimumY} r="4" fill="#fbbf24" stroke="#fff7ed" strokeWidth="1" />
               <text x="18" y="126" fill="#94a3b8" fontSize="8">0% НДС</text>
               <text x="304" y="126" textAnchor="end" fill="#94a3b8" fontSize="8">45%</text>
             </svg>
@@ -168,6 +176,13 @@ export default function EconomyDrawer({
               <span>Прогноз: {chart.minRevenue.toFixed(2)}–{chart.maxRevenue.toFixed(2)} млрд/ч</span>
               <span>Зона перегрева — правее оптимума</span>
             </div>
+            <p className={`mt-2 rounded-lg border px-2.5 py-2 text-[10px] leading-relaxed transition-all duration-200 ${game.taxes.vat < chart.optimumVat ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-300" : game.taxes.vat > chart.optimumVat ? "border-rose-500/25 bg-rose-500/10 text-rose-300" : "border-amber-500/25 bg-amber-500/10 text-amber-200"}`}>
+              {game.taxes.vat < chart.optimumVat
+                ? "НДС ниже оптимума: умеренное повышение приблизит поступления к максимуму без резкого роста теневого сектора."
+                : game.taxes.vat > chart.optimumVat
+                  ? "НДС выше оптимума: снижение ставки сократит теневой сектор и поддержит спрос и экономическую активность."
+                  : "Ставка НДС находится в точке максимума прогнозных поступлений."}
+            </p>
           </div>
 
           {taxRows.map(([key, label]) => (
