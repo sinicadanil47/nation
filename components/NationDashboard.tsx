@@ -27,7 +27,6 @@ import { gameActions, useGameStore } from "@/store/useGameStore";
 import type {
   MinistryId,
   Region,
-  RegionLevelKey,
   Speed,
 } from "@/types/game";
 
