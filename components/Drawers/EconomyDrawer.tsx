@@ -76,11 +76,11 @@ export default function EconomyDrawer({ game, onClose, onTaxChange }: Props) {
       <div className="mt-4 space-y-3 border-t border-slate-700 pt-3 text-sm">
         <p className="flex justify-between">
           <span className="text-slate-400">Доход / час</span>
-          <strong className="text-emerald-300">{game.budget.incomePerHour.toFixed(1)} млрд</strong>
+          <strong className="text-emerald-300 tabular-nums">{game.budget.incomePerHour.toFixed(1)} млрд · {(game.budget.incomePerHour / 3600 * 1000).toFixed(2)} млн/сек</strong>
         </p>
         <p className="flex justify-between">
           <span className="text-slate-400">Расходы / час</span>
-          <strong>{game.budget.expensesPerHour.toFixed(1)} млрд</strong>
+          <strong className="tabular-nums">{game.budget.expensesPerHour.toFixed(1)} млрд · {(game.budget.expensesPerHour / 3600 * 1000).toFixed(2)} млн/сек</strong>
         </p>
       </div>
     </BottomSheet>
