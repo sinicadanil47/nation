@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import BottomSheet from "@/components/Drawers/BottomSheet";
 import type { GameState } from "@/types/game";
 
@@ -35,22 +36,12 @@ export default function PresidentDrawer({
   return (
     <BottomSheet title="Власть" onClose={onClose}>
       <div className="mb-4 flex rounded-xl border border-white/[0.07] bg-[#090D14] p-1">
-        <button
-          type="button"
-          onClick={() => setSection("president")}
-          className={`min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-all duration-200 active:scale-[0.98] ${section === "president" ? "bg-gradient-to-b from-[#26384a] to-[#192535] text-cyan-100 shadow-lg" : "text-slate-500 hover:text-slate-200"}`}
-        >
-          Президент
-        </button>
-        <button
-          type="button"
-          onClick={() => setSection("parliament")}
-          className={`min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-all duration-200 active:scale-[0.98] ${section === "parliament" ? "bg-gradient-to-b from-[#26384a] to-[#192535] text-cyan-100 shadow-lg" : "text-slate-500 hover:text-slate-200"}`}
-        >
-          Парламент
-        </button>
+        <motion.button type="button" whileTap={{ scale: 0.97 }} onClick={() => setSection("president")} className={`relative min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${section === "president" ? "text-cyan-100" : "text-slate-500 hover:text-slate-200"}`}>{section === "president" ? <motion.span layoutId="governance-tab-indicator" className="absolute inset-0 rounded-lg bg-gradient-to-b from-[#26384a] to-[#192535] shadow-lg" transition={{ type: "spring", stiffness: 420, damping: 34 }} /> : null}<span className="relative z-10">Президент</span></motion.button>
+        <motion.button type="button" whileTap={{ scale: 0.97 }} onClick={() => setSection("parliament")} className={`relative min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${section === "parliament" ? "text-cyan-100" : "text-slate-500 hover:text-slate-200"}`}>{section === "parliament" ? <motion.span layoutId="governance-tab-indicator" className="absolute inset-0 rounded-lg bg-gradient-to-b from-[#26384a] to-[#192535] shadow-lg" transition={{ type: "spring", stiffness: 420, damping: 34 }} /> : null}<span className="relative z-10">Парламент</span></motion.button>
       </div>
 
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={section} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }}>
       {section === "president" ? (
         <>
           <div className="mb-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/35 to-[#0D111A] p-4 shadow-lg">
@@ -242,6 +233,8 @@ export default function PresidentDrawer({
           ))}
         </div>
       )}
+        </motion.div>
+      </AnimatePresence>
     </BottomSheet>
   );
 }

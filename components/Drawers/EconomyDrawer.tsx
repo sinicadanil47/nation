@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { Factory, GraduationCap, Minus, Plus, Users, UserRound } from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
@@ -136,6 +137,8 @@ export default function EconomyDrawer({
         ))}
       </div>
 
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }}>
       {tab === "tax" ? (
         <section className="space-y-3">
           <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3 shadow-lg">
@@ -309,6 +312,8 @@ export default function EconomyDrawer({
           </div>
         </section>
       ) : null}
+        </motion.div>
+      </AnimatePresence>
     </BottomSheet>
   );
 }
