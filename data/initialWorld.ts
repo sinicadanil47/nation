@@ -1,21 +1,8 @@
 import type { Decree, GameState, Ministry, Region } from "@/types/game";
+import { generateMap } from "@/utils/mapGenerator";
+const generatedMap = generateMap();
 
-const regionShapes = [
-  "70,55 170,40 205,100 160,145 75,130",
-  "170,40 275,48 300,115 205,100",
-  "275,48 390,65 380,135 300,115",
-  "75,130 160,145 175,230 90,220 45,175",
-  "160,145 205,100 300,115 285,205 175,230",
-  "300,115 380,135 405,220 285,205",
-  "45,175 90,220 110,315 35,290 20,230",
-  "90,220 175,230 185,320 110,315",
-  "175,230 285,205 300,300 185,320",
-  "285,205 405,220 420,300 300,300",
-  "35,290 110,315 125,400 45,390",
-  "110,315 185,320 205,405 125,400",
-  "185,320 300,300 320,390 205,405",
-  "300,300 420,300 400,390 320,390",
-];
+const regionShapes = generatedMap.regions;
 
 const regionNames = [
   "Северный край",
@@ -51,7 +38,7 @@ const cityNames = [
   "Каспийск",
 ];
 
-const regionCenter = (shape: string) => { const points = shape.split(" ").map((point) => point.split(",").map(Number)); return { x: points.reduce((sum, point) => sum + point[0], 0) / points.length, y: points.reduce((sum, point) => sum + point[1], 0) / points.length }; };
+const regionCenter = (shape: string) => { const [x,y] = shape.split(",").map(Number); return {x,y}; }; };
 
 export const initialRegions: Region[] = regionNames.map((name, index) => ({
   id: `region-${index + 1}`,
