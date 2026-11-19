@@ -56,7 +56,7 @@ export const initialRegions: Region[] = regionNames.map((name, index) => ({
   name,
   city: cityNames[index],
   population: Number((1.55 + (index % 4) * 0.47).toFixed(2)),
-  incomePerHour: Number((0.887 + (index % 5) * 0.2).toFixed(2)),
+  incomePerHour: 0.886 + (index % 5) * 0.2,
   infrastructure: 2 + (index % 3),
   economy: 2 + (index % 4),
   medicine: 2 + (index % 3),
