@@ -72,13 +72,13 @@ export default function NationDashboard(){
       <div className="mt-3 grid grid-cols-2 gap-2">
        <div className="rounded-xl border border-white/[0.06] bg-white/[0.025] p-2">
         <span className="block text-[9px] text-slate-500">Эффективность</span>
-        <strong className={`text-lg font-extrabold tabular-nums ${performanceTone}`}>{m.performance}%</strong>
+        <strong className={`text-xl font-extrabold tabular-nums ${performanceTone}`}>{m.performance}%</strong>
         <small className="block text-[9px] leading-snug text-slate-500">{m.performance >= 75 ? "Стабильно" : m.performance >= 50 ? "Нужна настройка" : "Требует вмешательства"}</small>
        </div>
        <div className="rounded-xl border border-white/[0.06] bg-white/[0.025] p-2">
         <span className="block text-[9px] text-slate-500">Финансирование</span>
-        <strong className={`text-lg font-extrabold tabular-nums ${fundingTone}`}>{m.fundingPercent}%</strong>
-        <small className="block text-[9px] leading-snug text-slate-500">{m.fundingPercent < 90 ? "Рассмотрите повышение" : m.fundingPercent > 110 ? "Проверьте перерасход" : "Уровень сбалансирован"}</small>
+        <strong className={`text-xl font-extrabold tabular-nums ${fundingTone}`}>{m.fundingPercent}%</strong>
+        <small className={`mt-1 block text-[9px] leading-snug ${m.fundingPercent < 90 || m.performance < 50 ? "text-rose-300" : m.fundingPercent < 100 || m.performance < 75 ? "text-amber-300" : "text-emerald-300"}`}>{m.fundingPercent < 90 ? "Поднимите финансирование до 100%+" : m.performance < 50 ? "Снизьте нагрузку или прокачайте уровень" : m.fundingPercent > 110 ? "Проверьте перерасход бюджета" : m.performance < 75 ? "Снизьте нагрузку или прокачайте уровень" : "Оптимальный режим, менять не требуется"}</small>
        </div>
       </div>
      </button>
