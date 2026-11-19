@@ -56,7 +56,7 @@ export const initialRegions: Region[] = regionNames.map((name, index) => ({
   name,
   city: cityNames[index],
   population: Number((1.55 + (index % 4) * 0.47).toFixed(2)),
-  incomePerHour: Number((0.72 + (index % 5) * 0.19).toFixed(2)),
+  incomePerHour: Number((0.887 + (index % 5) * 0.2).toFixed(2)),
   infrastructure: 2 + (index % 3),
   economy: 2 + (index % 4),
   medicine: 2 + (index % 3),
@@ -89,6 +89,10 @@ export const initialRegions: Region[] = regionNames.map((name, index) => ({
 }));
 
 export const initialMinistries: Ministry[] = [
+  { id: "economy", name: "Экономика и налоги", expensePerHour: 1.1, level: 3, color: "amber", fundingPercent: 100, performance: 74 },
+  { id: "energy", name: "Энергетика", expensePerHour: 1.4, level: 3, color: "yellow", fundingPercent: 100, performance: 79 },
+  { id: "regions", name: "Регионы", expensePerHour: 0.8, level: 2, color: "cyan", fundingPercent: 100, performance: 70 },
+  { id: "president", name: "Офис Президента", expensePerHour: 0.5, level: 3, color: "violet", fundingPercent: 100, performance: 76 },
   { id: "industry", name: "Промышленность", expensePerHour: 1.2, level: 2, color: "orange", fundingPercent: 100, performance: 68 },
   { id: "parliament", name: "Парламент", expensePerHour: 0.6, level: 2, color: "blue", fundingPercent: 100, performance: 72 },
   { id: "media", name: "Медиа", expensePerHour: 0.4, level: 2, color: "pink", fundingPercent: 100, performance: 64 },
