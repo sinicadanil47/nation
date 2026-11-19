@@ -2,6 +2,10 @@ export type Speed = 0 | 1 | 2 | 5;
 export type TaxKey = "vat" | "income" | "profit";
 export type RegionLevelKey = "infrastructure" | "economy" | "medicine" | "education";
 export type MinistryId =
+  | "economy"
+  | "energy"
+  | "regions"
+  | "president"
   | "industry"
   | "parliament"
   | "media"
