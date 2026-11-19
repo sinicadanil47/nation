@@ -12,6 +12,7 @@ import MinistryDrawer from "@/components/Drawers/MinistryDrawer";
 import PresidentDrawer from "@/components/Drawers/PresidentDrawer";
 import IndustryDrawer from "@/components/Drawers/IndustryDrawer";
 import TacticalEventCard from "@/components/TacticalEventCard";
+import NationIllustration, { type IllustrationVariant } from "@/components/Illustrations";
 import RegionDrawer from "@/components/Drawers/RegionDrawer";
 import {gameActions,useGameStore} from "@/store/useGameStore";
 import type {MinistryId,Region} from "@/types/game";
@@ -19,6 +20,24 @@ import type {WorldCountry} from "@/data/worldCountries";
 type Tab="map"|"economy"|"ministries"|"power";
 type Drawer="region"|"economy"|"energy"|"president"|"ministry"|"industry"|null;
 const clock=(n:number)=>[Math.floor(n/3600),Math.floor(n%3600/60),n%60].map(v=>String(v).padStart(2,"0")).join(":");
+
+function getMinistryIllustration(id: MinistryId): IllustrationVariant {
+  switch (id) {
+    case "industry": return "industry";
+    case "security":
+    case "defense": return "security";
+    case "health": return "medical";
+    case "president":
+    case "parliament": return "government";
+    case "projects":
+    case "regions":
+    case "education":
+    case "economy":
+    case "energy":
+    case "media": return "projects";
+    default: return "projects";
+  }
+}
 export default function NationDashboard(){
  const game=useGameStore();const[ministriesListRef]=useAutoAnimate<HTMLDivElement>({duration:180});const[eventsListRef]=useAutoAnimate<HTMLDivElement>({duration:180});const[tab,setTab]=useState<Tab>("map");const[drawer,setDrawer]=useState<Drawer>(null);const[region,setRegion]=useState<Region|null>(null);const[ministryId,setMinistryId]=useState<MinistryId|null>(null);const[now,setNow]=useState(Date.now());const[newsIndex,setNewsIndex]=useState(0);const[newsOpen,setNewsOpen]=useState(false);const[foreignCountry,setForeignCountry]=useState<(WorldCountry&{area:number;cellCount:number})|null>(null);
  useEffect(()=>{gameActions.initialize()},[]);
@@ -50,8 +69,9 @@ export default function NationDashboard(){
    {game.ministries.map(m=>{
     const Icon=m.id==="defense"?Shield:m.id==="security"?Scale:m.id==="education"?GraduationCap:m.id==="health"?HeartPulse:m.id==="economy"?Briefcase:m.id==="energy"?Zap:Globe2;
     return <motion.article key={m.id} whileTap={{ scale: 0.985 }} className="min-w-0 ministry-card rounded-2xl border border-white/[0.07] bg-gradient-to-br from-[#182234] via-[#131926] to-[#0D111A] p-3 shadow-lg">
-     <button type="button" onClick={()=>{setMinistryId(m.id);setDrawer("ministry")}} className="w-full text-left transition-all duration-200 active:scale-[0.98]">
-      <div className="flex items-center justify-between gap-2">
+     <button type="button" onClick={()=>{setMinistryId(m.id);setDrawer("ministry")}} className="w-full min-w-0 text-left transition-all duration-200 active:scale-[0.98]">
+      <NationIllustration variant={getMinistryIllustration(m.id)} compact className="mb-3 h-[76px] w-full" />
+      <div className="flex min-w-0 items-center justify-between gap-2">
        <span className="flex min-w-0 items-center gap-2 text-xs font-semibold"><Icon size={17} className="shrink-0 text-cyan-200"/><span className="min-w-0 break-words leading-snug">{m.name}</span></span>
        <span className="shrink-0 whitespace-nowrap tabular-nums text-[10px] font-bold text-emerald-300">{m.performance}%</span>
       </div>

@@ -5,6 +5,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ReactNode } from "react";
 import { Plus, Wrench } from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
+import NationIllustration from "@/components/Illustrations";
 import type { GameState } from "@/types/game";
 
 function AdvisorCard({ children, tone = "neutral" }: {
@@ -87,6 +88,7 @@ export default function IndustryDrawer({
 
   return (
     <BottomSheet title="Промышленность" onClose={onClose}>
+      <NationIllustration variant="industry" className="mb-4 h-[92px] w-full" />
       <div className="grid grid-cols-2 gap-2">
         <div className="stat-card"><span>Предприятий</span><strong className="tabular-nums">{game.enterprises.length}</strong></div>
         <div className="stat-card"><span>Средний износ</span><strong className={`tabular-nums ${wear >= 25 ? "text-rose-400" : "text-emerald-400"}`}>{wear.toFixed(1)}%</strong></div>

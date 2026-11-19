@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
+import NationIllustration from "@/components/Illustrations";
 import type { GameState } from "@/types/game";
 
 interface Props {
@@ -43,6 +44,8 @@ export default function PresidentDrawer({
         <motion.button type="button" whileTap={{ scale: 0.97 }} onClick={() => setSection("parliament")} className={`relative min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${section === "parliament" ? "text-cyan-100" : "text-slate-500 hover:text-slate-200"}`}>{section === "parliament" ? <motion.span layoutId="governance-tab-indicator" className="absolute inset-0 rounded-lg bg-gradient-to-b from-[#26384a] to-[#192535] shadow-lg" transition={{ type: "spring", stiffness: 420, damping: 34 }} /> : null}<span className="relative z-10">Парламент</span></motion.button>
       </div>
 
+      <NationIllustration variant="government" className="mb-4 h-[88px] w-full" />
+
       <AnimatePresence mode="wait" initial={false}>
         <motion.div key={section} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }}>
       {section === "president" ? (
@@ -72,6 +75,7 @@ export default function PresidentDrawer({
             <div className="rounded-xl border border-[#293344] bg-[#171b26] p-3">
               <p className="text-[9px] font-bold uppercase tracking-wider text-amber-300">Нацпроекты</p>
               <p className="mt-1 text-xs font-semibold">Программа развития</p>
+              <NationIllustration variant="projects" compact className="mt-2 h-[72px] w-full" />
               <p className="mt-1 text-[10px] leading-relaxed text-slate-400">
                 Инфраструктура, промышленность, медицина и человеческий капитал.
               </p>

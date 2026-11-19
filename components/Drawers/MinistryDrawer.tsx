@@ -2,6 +2,7 @@
 
 import { Minus, Plus } from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
+import NationIllustration, { type IllustrationVariant } from "@/components/Illustrations";
 import type { GameState, Ministry } from "@/types/game";
 
 interface Props {
@@ -36,11 +37,23 @@ export default function MinistryDrawer({
           : "Собираемость стабильна. Сфокусируйтесь на предсказуемых правилах и инвестициях в производительность."
         : "Сравнивайте предельный эффект финансирования с дополнительными расходами. Повышайте бюджет только там, где растёт эффективность.";
 
+  const illustration: IllustrationVariant =
+    ministry.id === "industry"
+      ? "industry"
+      : ministry.id === "security" || ministry.id === "defense"
+        ? "security"
+        : ministry.id === "health"
+          ? "medical"
+          : ministry.id === "president" || ministry.id === "parliament"
+            ? "government"
+            : "projects";
+
   const saving = Math.max(0, -expenseDelta);
   const extraCost = Math.max(0, expenseDelta);
 
   return (
     <BottomSheet title={ministry.name} onClose={onClose}>
+      <NationIllustration variant={illustration} className="mb-4 h-[88px] w-full" />
       <div className="grid min-w-0 grid-cols-2 gap-3">
         <div className="stat-card flex flex-col gap-1">
           <span>Уровень ведомства</span>
