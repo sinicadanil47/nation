@@ -8,4 +8,6 @@ export const enterpriseTypes:import("@/types/game").EnterpriseType[]=[
 {id:"machine_tools",name:"Станкостроительный завод",sector:"engineering",buildCost:145,incomePerSecond:.024,energyMW:72,jobs:390,specialization:"Машиностроение",description:"Промышленное оборудование."},
 {id:"heavy",name:"Тяжёлое машиностроение",sector:"engineering",buildCost:185,incomePerSecond:.031,energyMW:130,jobs:610,specialization:"Машиностроение",description:"Тяжёлые машины и турбины."},
 {id:"pharma",name:"Фармацевтический завод",sector:"consumer",buildCost:125,incomePerSecond:.022,energyMW:38,jobs:280,specialization:"Туризм",description:"Лекарства и вакцины."},
-{id:"agro",name:"Агропромышленный комплекс",sector:"consumer",buildCost:88,incomePerSecond:.016,energyMW:24,jobs:440,specialization:"Сельское хозяйство",description:"Переработка сельхозпродукции."}]
+{id:"agro",name:"Агропромышленный комплекс",sector:"consumer",buildCost:88,incomePerSecond:.016,energyMW:24,jobs:440,specialization:"Сельское хозяйство",description:"Переработка сельхозпродукции."},
+{id:"power_grid",name:"Энергетический комплекс",sector:"basic",buildCost:155,incomePerSecond:.028,energyMW:-120,jobs:340,specialization:"Энергетика",description:"Генерация, балансировка и накопление электроэнергии."},
+{id:"logistics_hub",name:"Логистический терминал",sector:"engineering",buildCost:105,incomePerSecond:.019,energyMW:22,jobs:360,specialization:"Логистика",description:"Складские мощности, грузовые потоки и транспортные узлы."}]
