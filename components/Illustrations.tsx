@@ -3,7 +3,7 @@
 import { useId, type CSSProperties } from "react";
 import { motion } from "framer-motion";
 
-export type IllustrationVariant = "industry" | "security" | "medical" | "government" | "projects" | "economy" | "energy" | "regions" | "parliament" | "media" | "education" | "defense";
+export type IllustrationVariant = "industry" | "security" | "medical" | "government" | "projects" | "economy" | "energy" | "regions" | "parliament" | "media" | "education" | "defense" | "president" | "health";
 
 interface Props {
   variant: IllustrationVariant;
@@ -24,6 +24,8 @@ const labels: Record<IllustrationVariant, { title: string; subtitle: string; acc
   media: { title: "Информационный центр", subtitle: "СВЯЗЬ · ОБЩЕСТВЕННОЕ МНЕНИЕ", accent: "#72c7ed" },
   education: { title: "Образовательный контур", subtitle: "НАУКА · КАДРЫ", accent: "#a4a0f5" },
   defense: { title: "Оборонный комплекс", subtitle: "ГОТОВНОСТЬ · СТРАТЕГИЯ", accent: "#75a9f4" },
+  president: { title: "Офис Президента", subtitle: "УПРАВЛЕНИЕ · СТРАТЕГИЯ", accent: "#d9bd83" },
+  health: { title: "Медицинская система", subtitle: "ЗДОРОВЬЕ · КЛИНИКИ", accent: "#f08fba" },
 };
 
 export default function NationIllustration({ variant, className = "", compact = false }: Props) {
@@ -120,6 +122,20 @@ export default function NationIllustration({ variant, className = "", compact = 
         {variant === "media" && (<g><path d="M47 35L137 35L151 49V78H39V43L47 35Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M55 49H111M55 59H132M55 69H99" stroke={item.accent} strokeWidth="2" strokeLinecap="round"/><path d="M30 27L94 10L158 27M94 10V35" stroke="#B9CFDC" strokeWidth="2"/><circle cx="94" cy="10" r="4" fill={item.accent}/></g>)}
         {variant === "education" && (<g><path d="M24 40L94 13L164 40L94 68L24 40Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M53 52V70C77 88 111 88 135 70V52M164 40V69" stroke={item.accent} strokeWidth="2"/><path d="M84 34H104V51H84Z" stroke="#D8E8F5" strokeWidth="2"/><path d="M94 34V51" stroke={item.accent} strokeWidth="2"/></g>)}
         {variant === "defense" && (<g><path d="M94 12L145 30V54C145 70 123 82 94 89C65 82 43 70 43 54V30L94 12Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M94 26L129 38V54C129 65 112 74 94 80C76 74 59 65 59 54V38L94 26Z" stroke="#D8E8F5" strokeOpacity=".65"/><path d="M94 34V67M78 50H110M83 40L105 62M105 40L83 62" stroke={item.accent} strokeWidth="2"/></g>)}
+        {variant === "president" && (
+          <g>
+            <path d="M24 42L88 14L152 42H24Z" fill={`url(#${id}-metal)`} stroke={item.accent} strokeWidth="2" />
+            <path d="M34 47H142M42 48V78M65 48V78M88 48V78M111 48V78M134 48V78M27 82H149" stroke="#D9E8F2" strokeWidth="2.5" />
+            <path d="M88 14V6M83 10H93M155 25L165 15" stroke={item.accent} strokeWidth="2" />
+          </g>
+        )}
+        {variant === "health" && (
+          <g>
+            <path d="M34 80V35H145V80Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2" />
+            <path d="M77 43H102M89 31V56" stroke={item.accent} strokeWidth="6" strokeLinecap="round" />
+            <path d="M43 66H62L70 55L79 72L88 61H111L120 50L128 66H147" stroke="#D9E8F2" strokeWidth="2" />
+          </g>
+        )}
       </svg>
     </motion.div>
   );
