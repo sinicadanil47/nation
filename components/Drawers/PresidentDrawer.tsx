@@ -41,6 +41,19 @@ export default function PresidentDrawer({
         </p>
       </div>
 
+      <div className="mb-4 grid grid-cols-2 gap-2">
+        <div className="rounded-xl border border-[#293344] bg-[#171b26] p-3">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-cyan-300">Парламент</p>
+          <p className="mt-1 text-xs font-semibold">Законодательная повестка</p>
+          <p className="mt-1 text-[10px] leading-relaxed text-slate-400">Контроль исполнения бюджета и согласование государственных реформ.</p>
+        </div>
+        <div className="rounded-xl border border-[#293344] bg-[#171b26] p-3">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-amber-300">Нацпроекты</p>
+          <p className="mt-1 text-xs font-semibold">Программа развития</p>
+          <p className="mt-1 text-[10px] leading-relaxed text-slate-400">Инфраструктура, промышленность, медицина и человеческий капитал.</p>
+        </div>
+      </div>
+
       <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-500">
         Президентские указы
       </h3>
