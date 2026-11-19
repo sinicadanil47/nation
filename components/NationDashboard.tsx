@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import type { PointerEvent } from "react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
 import EconomyDrawer from "@/components/Drawers/EconomyDrawer";
 import EnergyDrawer from "@/components/Drawers/EnergyDrawer";
@@ -191,7 +192,7 @@ function MapView({ regions, onSelect }: MapViewProps) {
   ) => Math.hypot(first.x - second.x, first.y - second.y);
 
   const handlePointerDown = (
-    event: React.PointerEvent<SVGSVGElement>,
+    event: PointerEvent<SVGSVGElement>,
   ) => {
     event.currentTarget.setPointerCapture(event.pointerId);
     pointers.current.set(event.pointerId, {
@@ -226,7 +227,7 @@ function MapView({ regions, onSelect }: MapViewProps) {
   };
 
   const handlePointerMove = (
-    event: React.PointerEvent<SVGSVGElement>,
+    event: PointerEvent<SVGSVGElement>,
   ) => {
     if (!pointers.current.has(event.pointerId)) {
       return;
@@ -272,7 +273,7 @@ function MapView({ regions, onSelect }: MapViewProps) {
   };
 
   const handlePointerUp = (
-    event: React.PointerEvent<SVGSVGElement>,
+    event: PointerEvent<SVGSVGElement>,
   ) => {
     pointers.current.delete(event.pointerId);
     const remaining = Array.from(pointers.current.values());
