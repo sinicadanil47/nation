@@ -51,6 +51,8 @@ const cityNames = [
   "Каспийск",
 ];
 
+const regionCenter = (shape: string) => { const points = shape.split(" ").map((point) => point.split(",").map(Number)); return { x: points.reduce((sum, point) => sum + point[0], 0) / points.length, y: points.reduce((sum, point) => sum + point[1], 0) / points.length }; };
+
 export const initialRegions: Region[] = regionNames.map((name, index) => ({
   id: `region-${index + 1}`,
   name,
@@ -75,8 +77,8 @@ export const initialRegions: Region[] = regionNames.map((name, index) => ({
   cities: [
     {
       name: cityNames[index],
-      x: 110 + (index % 4) * 75,
-      y: 75 + Math.floor(index / 4) * 105,
+      x: regionCenter(regionShapes[index]).x,
+      y: regionCenter(regionShapes[index]).y,
       size: index === 4 ? 7 : 4,
     },
     {

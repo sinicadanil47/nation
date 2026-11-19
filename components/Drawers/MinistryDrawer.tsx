@@ -21,11 +21,11 @@ export default function MinistryDrawer({
   return (
     <BottomSheet title={ministry.name} onClose={onClose}>
       <div className="grid grid-cols-2 gap-2">
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Уровень ведомства</span>
           <strong>{ministry.level}</strong>
         </div>
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Эффективность</span>
           <strong>{ministry.performance}%</strong>
         </div>
@@ -82,17 +82,17 @@ export default function MinistryDrawer({
       </div>
 
       <div className="mt-4 space-y-3 text-sm">
-        <div className="flex justify-between">
+        <div className="flex flex-col items-start gap-1">
           <span className="text-slate-400">Базовые расходы / час</span>
           <strong>{ministry.expensePerHour.toFixed(2)} млрд</strong>
         </div>
-        <div className="flex justify-between">
+        <div className="flex flex-col items-start gap-1">
           <span className="text-slate-400">Текущие расходы / час</span>
           <strong className="text-amber-300">
             {actualExpense.toFixed(2)} млрд
           </strong>
         </div>
-        <div className="flex justify-between">
+        <div className="flex flex-col items-start gap-1">
           <span className="text-slate-400">Оценка работы ведомства</span>
           <strong>{ministry.performance}%</strong>
         </div>

@@ -26,3 +26,5 @@
 .bottom-tabs button.active{color:#b5e7d1;background:#29463f40}
 .bottom-tabs button i{position:absolute;top:4px;right:calc(50% - 23px);display:grid;min-width:14px;height:14px;place-items:center;border-radius:10px;background:#e5b96d;color:#17120a;font-size:8px;font-style:normal}
 .ticker-window{min-width:0;overflow:hidden;flex:1}.ticker-track{display:inline-block;min-width:max-content;white-space:normal;animation:none}
+
+.stat-card{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}.stat-card>span{display:block;color:#93a3b5;font-size:10px;line-height:1.35}.stat-card>strong{display:block;color:#f4f6fa;font-size:15px;line-height:1.35;font-variant-numeric:tabular-nums}.ticker-window{min-width:0;overflow:hidden;flex:1}.ticker-track{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

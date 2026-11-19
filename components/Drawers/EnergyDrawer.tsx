@@ -26,21 +26,21 @@ export default function EnergyDrawer({
   return (
     <BottomSheet title="Энергетика" onClose={onClose}>
       <div className="grid grid-cols-2 gap-2">
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Генерация</span>
           <strong>{game.energy.generationGW.toFixed(1)} ГВт</strong>
         </div>
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Потребление</span>
           <strong>{game.energy.consumptionGW.toFixed(1)} ГВт</strong>
         </div>
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Баланс</span>
           <strong className={balance >= 0 ? "text-emerald-300" : "text-red-300"}>
             {balance >= 0 ? "+" : ""}{balance.toFixed(1)} ГВт
           </strong>
         </div>
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Накопители</span>
           <strong>{game.energy.storageGWh.toFixed(1)} ГВт·ч</strong>
         </div>

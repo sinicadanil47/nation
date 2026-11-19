@@ -23,7 +23,7 @@ export default function PresidentDrawer({
   return (
     <BottomSheet title="Офис Президента" onClose={onClose}>
       <div className="mb-4 rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-1">
           <span className="text-xs text-slate-400">Рейтинг правительства</span>
           <strong className="text-xl text-emerald-300">
             {Math.round(game.rating)}%

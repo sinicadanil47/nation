@@ -21,11 +21,11 @@ export default function EconomyDrawer({ game, onClose, onTaxChange, onOpenEnergy
   return (
     <BottomSheet title="Экономика и налоги" onClose={onClose}>
       <div className="mb-4 grid grid-cols-2 gap-2">
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Налоговые поступления</span>
           <strong>{game.budget.taxRevenue.toFixed(1)} млрд/ч</strong>
         </div>
-        <div className="stat-card">
+        <div className="stat-card flex flex-col gap-1">
           <span>Собираемость</span>
           <strong>{game.taxes.collectionRate.toFixed(1)}%</strong>
         </div>
@@ -76,11 +76,11 @@ export default function EconomyDrawer({ game, onClose, onTaxChange, onOpenEnergy
       </div>
       <button type="button" onClick={onOpenEnergy} className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/5 text-xs font-bold text-cyan-300">Энергетика и баланс сети</button>
       <div className="mt-4 space-y-3 border-t border-slate-700 pt-3 text-sm">
-        <p className="flex justify-between">
+        <p className="flex flex-col items-start gap-1">
           <span className="text-slate-400">Доход / час</span>
           <strong className="text-emerald-300 tabular-nums">{game.budget.incomePerHour.toFixed(1)} млрд · {(game.budget.incomePerHour / 3600 * 1000).toFixed(2)} млн/сек</strong>
         </p>
-        <p className="flex justify-between">
+        <p className="flex flex-col items-start gap-1">
           <span className="text-slate-400">Расходы / час</span>
           <strong className="tabular-nums">{game.budget.expensesPerHour.toFixed(1)} млрд · {(game.budget.expensesPerHour / 3600 * 1000).toFixed(2)} млн/сек</strong>
         </p>

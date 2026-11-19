@@ -12,10 +12,10 @@ export default function RegionDrawer({region,game,onClose,onUpgrade,onAccelerate
  const remaining=construction?Math.ceil((construction.completesAt-Date.now())/1000):0;
  return <BottomSheet title={region.name} onClose={onClose}>
   <div className="mb-4 grid grid-cols-2 gap-2">
-   <div className="stat-card"><span>Население</span><strong className="tabular-nums">{region.population.toFixed(1)} млн</strong></div>
-   <div className="stat-card"><span>Доход / час</span><strong className="tabular-nums">{region.incomePerHour.toFixed(1)} млрд</strong></div>
-   <div className="stat-card"><span>Специализация</span><strong>{region.specialization}</strong></div>
-   <div className="stat-card"><span>Свободная земля</span><strong>{region.freeLand}%</strong></div>
+   <div className="stat-card flex flex-col gap-1"><span>Население</span><strong className="tabular-nums">{region.population.toFixed(1)} млн</strong></div>
+   <div className="stat-card flex flex-col gap-1"><span>Доход / час</span><strong className="tabular-nums">{region.incomePerHour.toFixed(1)} млрд</strong></div>
+   <div className="stat-card flex flex-col gap-1"><span>Специализация</span><strong>{region.specialization}</strong></div>
+   <div className="stat-card flex flex-col gap-1"><span>Свободная земля</span><strong>{region.freeLand}%</strong></div>
   </div>
   <div className="mb-3 flex justify-between text-xs text-slate-400"><span>Строительные бригады</span><strong className="text-amber-300">{game.constructionTeams} / 3</strong></div>
   {construction?<div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3"><div className="flex items-center justify-between"><span className="text-xs font-bold text-amber-300">Идёт строительство</span><strong className="tabular-nums font-mono text-amber-200">{countdown(remaining)}</strong></div><p className="mt-1 text-[10px] text-slate-400">Улучшение завершится автоматически.</p><button type="button" onClick={()=>onAccelerate(construction.id)} disabled={game.budget.treasury<5} className="mt-3 flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-amber-500/15 text-xs font-bold text-amber-300 disabled:opacity-40"><Zap size={14}/> Ускорить за $5 млрд</button></div>:null}
