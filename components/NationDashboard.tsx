@@ -3,7 +3,7 @@ import {useEffect,useState} from "react";
 import { motion } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { toast } from "sonner";
-import {Banknote,Building2,Landmark,Map,RadioTower,RotateCcw,Zap,Shield,GraduationCap,Scale,HeartPulse,Briefcase,Globe2} from "lucide-react";
+import {Banknote,Building2,Landmark,Map,RadioTower,RotateCcw,Zap,Shield,GraduationCap,Scale,HeartPulse,Briefcase,Globe2,Coins,MapPinned,Factory,Newspaper,ShieldCheck,Swords,Target} from "lucide-react";
 import CountryMap from "@/components/CountryMap";
 import BottomSheet from "@/components/Drawers/BottomSheet";
 import EconomyDrawer from "@/components/Drawers/EconomyDrawer";
@@ -12,7 +12,6 @@ import MinistryDrawer from "@/components/Drawers/MinistryDrawer";
 import PresidentDrawer from "@/components/Drawers/PresidentDrawer";
 import IndustryDrawer from "@/components/Drawers/IndustryDrawer";
 import TacticalEventCard from "@/components/TacticalEventCard";
-import NationIllustration, { type IllustrationVariant } from "@/components/Illustrations";
 import RegionDrawer from "@/components/Drawers/RegionDrawer";
 import {gameActions,useGameStore} from "@/store/useGameStore";
 import type {MinistryId,Region} from "@/types/game";
@@ -21,23 +20,7 @@ type Tab="map"|"economy"|"ministries"|"power";
 type Drawer="region"|"economy"|"energy"|"president"|"ministry"|"industry"|null;
 const clock=(n:number)=>[Math.floor(n/3600),Math.floor(n%3600/60),n%60].map(v=>String(v).padStart(2,"0")).join(":");
 
-function getMinistryIllustration(id: MinistryId): IllustrationVariant {
-  switch (id) {
-    case "industry": return "industry";
-    case "security":
-    case "defense": return "security";
-    case "health": return "medical";
-    case "president":
-    case "parliament": return "government";
-    case "projects":
-    case "regions":
-    case "education":
-    case "economy":
-    case "energy":
-    case "media": return "projects";
-    default: return "projects";
-  }
-}
+
 export default function NationDashboard(){
  const game=useGameStore();const[ministriesListRef]=useAutoAnimate<HTMLDivElement>({duration:180});const[eventsListRef]=useAutoAnimate<HTMLDivElement>({duration:180});const[tab,setTab]=useState<Tab>("map");const[drawer,setDrawer]=useState<Drawer>(null);const[region,setRegion]=useState<Region|null>(null);const[ministryId,setMinistryId]=useState<MinistryId|null>(null);const[now,setNow]=useState(Date.now());const[newsIndex,setNewsIndex]=useState(0);const[newsOpen,setNewsOpen]=useState(false);const[foreignCountry,setForeignCountry]=useState<(WorldCountry&{area:number;cellCount:number})|null>(null);
  useEffect(()=>{gameActions.initialize()},[]);
@@ -65,24 +48,30 @@ export default function NationDashboard(){
  <nav className="floating-dock fixed bottom-[max(10px,env(safe-area-inset-bottom))] left-3 right-3 z-30 mx-auto grid max-w-[560px] grid-cols-4"><motion.button type="button" whileTap={{ scale: 0.97 }} onClick={()=>selectTab("map")} className={tab==="map"?"active":""}><Map size={18}/><span>Карта</span></motion.button><motion.button type="button" whileTap={{ scale: 0.97 }} onClick={()=>selectTab("economy")} className={tab==="economy"?"active":""}><Banknote size={18}/><span>Экономика</span></motion.button><motion.button type="button" whileTap={{ scale: 0.97 }} onClick={()=>selectTab("ministries")} className={tab==="ministries"?"active":""}><Building2 size={18}/><span>Ведомства</span></motion.button><motion.button type="button" whileTap={{ scale: 0.97 }} onClick={()=>selectTab("power")} className={tab==="power"?"active":""}><Landmark size={18}/><span>Власть</span>{available>0?<i>{available}</i>:null}</motion.button></nav>
  {drawer==="region"&&region?<RegionDrawer region={region} game={game} onClose={()=>setDrawer(null)} onUpgrade={handleRegionUpgrade} onAccelerate={gameActions.accelerateConstruction}/>:null}{drawer==="economy"?<EconomyDrawer game={game} onClose={()=>setDrawer(null)} onTaxChange={gameActions.updateTax} onOpenEnergy={()=>setDrawer("energy")}/>:null}{drawer==="energy"?<EnergyDrawer game={game} onClose={()=>setDrawer(null)} onBuildPlant={handleBuildPlant} onBuildStorage={handleBuildStorage}/>:null}{drawer==="president"?<PresidentDrawer game={game} onClose={()=>setDrawer(null)} onIssueDecree={handleIssueDecree} onPublishAddress={gameActions.publishAddress} onNegotiateFaction={gameActions.negotiateFaction} onVoteLaw={handleVoteLaw}/>:null}{drawer==="industry"?<IndustryDrawer game={game} onClose={()=>setDrawer(null)} onBuild={handleBuildEnterprise} onRepair={handleRepair}/>:null}{drawer==="ministry"&&ministry?<MinistryDrawer game={game} ministry={ministry} onClose={()=>setDrawer(null)} onFundingChange={gameActions.setMinistryFunding}/>:null}
  {tab==="ministries"&&!drawer?<BottomSheet title="Государственные ведомства" onClose={()=>setTab("map")}>
-  <div ref={ministriesListRef} className="grid min-w-0 grid-cols-2 gap-3">
+  <div ref={ministriesListRef} className="grid min-w-0 grid-cols-1 gap-3">
    {game.ministries.map(m=>{
-    const Icon=m.id==="defense"?Shield:m.id==="security"?Scale:m.id==="education"?GraduationCap:m.id==="health"?HeartPulse:m.id==="economy"?Briefcase:m.id==="energy"?Zap:Globe2;
-    return <motion.article key={m.id} whileTap={{ scale: 0.985 }} className="min-w-0 ministry-card rounded-2xl border border-white/[0.07] bg-gradient-to-br from-[#182234] via-[#131926] to-[#0D111A] p-3 shadow-lg">
-     <button type="button" onClick={()=>{setMinistryId(m.id);setDrawer("ministry")}} className="w-full min-w-0 text-left transition-all duration-200 active:scale-[0.98]">
-      <NationIllustration variant={getMinistryIllustration(m.id)} compact className="mb-3 h-[76px] w-full" />
-      <div className="flex min-w-0 items-center justify-between gap-2">
-       <span className="flex min-w-0 items-center gap-2 text-xs font-semibold"><Icon size={17} className="shrink-0 text-cyan-200"/><span className="min-w-0 break-words leading-snug">{m.name}</span></span>
-       <span className="shrink-0 whitespace-nowrap tabular-nums text-[10px] font-bold text-emerald-300">{m.performance}%</span>
-      </div>
+    const Icon=m.id==="economy"?Coins:m.id==="energy"?Zap:m.id==="regions"?MapPinned:m.id==="president"?Landmark:m.id==="industry"?Factory:m.id==="parliament"?Scale:m.id==="media"?Newspaper:m.id==="health"?HeartPulse:m.id==="education"?GraduationCap:m.id==="security"?ShieldCheck:m.id==="defense"?Swords:Target;
+    const accent=m.id==="economy"?"text-amber-300 bg-amber-400/10 border-amber-300/20":m.id==="energy"?"text-yellow-300 bg-yellow-400/10 border-yellow-300/20":m.id==="regions"?"text-emerald-300 bg-emerald-400/10 border-emerald-300/20":m.id==="president"?"text-orange-200 bg-orange-300/10 border-orange-200/20":m.id==="industry"?"text-teal-300 bg-teal-400/10 border-teal-300/20":m.id==="parliament"?"text-violet-300 bg-violet-400/10 border-violet-300/20":m.id==="media"?"text-sky-300 bg-sky-400/10 border-sky-300/20":m.id==="health"?"text-rose-300 bg-rose-400/10 border-rose-300/20":m.id==="education"?"text-indigo-300 bg-indigo-400/10 border-indigo-300/20":m.id==="security"?"text-cyan-300 bg-cyan-400/10 border-cyan-300/20":m.id==="defense"?"text-blue-300 bg-blue-400/10 border-blue-300/20":"text-lime-300 bg-lime-400/10 border-lime-300/20";
+    return <motion.article key={m.id} whileTap={{ scale: 0.995 }} className="min-w-0 ministry-card rounded-2xl border border-white/[0.07] bg-gradient-to-br from-[#182234] via-[#131926] to-[#0D111A] p-3 shadow-lg">
+     <button type="button" onClick={()=>{setMinistryId(m.id);setDrawer("ministry")}} className="flex w-full min-w-0 flex-col text-left transition-all duration-200 active:scale-[0.99]">
+      <span className="flex w-full min-w-0 items-center gap-3">
+       <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border ${accent}`}><Icon size={25} strokeWidth={1.8}/></span>
+       <span className="min-w-0 flex-1">
+        <span className="flex min-w-0 items-start justify-between gap-2">
+         <span className="min-w-0 whitespace-normal break-words text-sm font-semibold leading-snug text-slate-100">{m.name}</span>
+         <span className="shrink-0 whitespace-nowrap tabular-nums text-[11px] font-bold text-emerald-300">{m.performance}%</span>
+        </span>
+        <span className="mt-1 block text-[10px] text-slate-500">Эффективность ведомства</span>
+       </span>
+      </span>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800"><div className="h-full rounded-full bg-gradient-to-r from-emerald-600 via-teal-400 to-cyan-300 transition-all duration-200" style={{width:`${Math.max(0,Math.min(100,m.performance))}%`}}/></div>
       <div className="mt-2 flex items-center justify-between gap-2 text-[9px]"><span className="text-slate-500">Эффективность</span><span className="whitespace-nowrap tabular-nums text-slate-300">Финансирование {m.fundingPercent}%</span></div>
      </button>
      {m.id==="defense"||m.id==="security"?<div className="mt-3 border-t border-white/[0.07] pt-3">
       <p className="text-[9px] leading-relaxed text-slate-400">Боеготовность {game.security.readiness}% · Стабильность {game.security.stability}% · Коррупция {game.security.corruption}%</p>
-      <div className="mt-3 grid min-w-0 grid-cols-2 items-stretch gap-3">
-       {(m.id==="defense"?[["airDefense","ПВО"],["cyberForces","Кибервойска"]]:[["antiCorruption","Антикорр. бюро"],["police","Полиция"]]).map(([key,label])=><button key={key} type="button" disabled={game.security.modernization[key as keyof typeof game.security.modernization]>=5||game.budget.treasury<40*(game.security.modernization[key as keyof typeof game.security.modernization]+1)} onClick={()=>handleSecurityUpgrade(key as "airDefense"|"cyberForces"|"antiCorruption"|"police")} className="flex h-full min-h-[76px] min-w-0 flex-col justify-between break-words hyphens-auto rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] px-2 py-2 text-left text-[9px] leading-snug text-emerald-200 transition-all duration-200 active:scale-[0.98] disabled:opacity-35">
-        <span className="flex min-w-0 items-center gap-1.5 break-words leading-tight">{key==="airDefense"||key==="cyberForces"?<Shield size={12} className="shrink-0 text-cyan-200"/>:<Scale size={12} className="shrink-0 text-emerald-200"/>}{label}</span><span className="mt-2 whitespace-nowrap tabular-nums text-[8px] text-emerald-300">Ур. {game.security.modernization[key as keyof typeof game.security.modernization]} · {40*(game.security.modernization[key as keyof typeof game.security.modernization]+1)} млрд</span>
+      <div className="mt-3 grid min-w-0 grid-cols-2 items-stretch gap-2">
+       {(m.id==="defense"?[["airDefense","ПВО"],["cyberForces","Кибервойска"]]:[["antiCorruption","Антикорр. бюро"],["police","Полиция"]]).map(([key,label])=><button key={key} type="button" disabled={game.security.modernization[key as keyof typeof game.security.modernization]>=5||game.budget.treasury<40*(game.security.modernization[key as keyof typeof game.security.modernization]+1)} onClick={()=>handleSecurityUpgrade(key as "airDefense"|"cyberForces"|"antiCorruption"|"police")} className="flex h-full min-h-[76px] min-w-0 flex-col justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] px-2.5 py-2 text-left text-[10px] leading-snug text-emerald-200 transition-all duration-200 active:scale-[0.98] disabled:opacity-35">
+        <span className="flex min-w-0 items-start gap-2 whitespace-normal leading-snug"><span className="shrink-0 pt-0.5">{key==="airDefense"||key==="cyberForces"?<Shield size={13} className="text-cyan-200"/>:<Scale size={13} className="text-emerald-200"/>}</span><span className="min-w-0 whitespace-normal break-words">{label}</span></span><span className="mt-2 whitespace-nowrap tabular-nums text-[9px] text-emerald-300">Ур. {game.security.modernization[key as keyof typeof game.security.modernization]} · {40*(game.security.modernization[key as keyof typeof game.security.modernization]+1)} млрд</span>
        </button>)}
       </div>
      </div>:null}
