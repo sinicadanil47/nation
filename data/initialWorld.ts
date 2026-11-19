@@ -38,7 +38,7 @@ const cityNames = [
   "Каспийск",
 ];
 
-const regionCenter = (shape: string) => { const [x,y] = shape.split(",").map(Number); return {x,y}; }; };
+const regionCenter = (shape: string) => { const [x, y] = shape.split(",").map(Number); return { x, y }; };
 
 export const initialRegions: Region[] = regionNames.map((name, index) => ({
   id: `region-${index + 1}`,
