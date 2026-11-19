@@ -8,6 +8,7 @@ interface Props {
   game: GameState;
   onClose: () => void;
   onTaxChange: (key: TaxKey, value: number) => void;
+  onOpenEnergy: () => void;
 }
 
 const rows: { key: TaxKey; label: string }[] = [
@@ -16,7 +17,7 @@ const rows: { key: TaxKey; label: string }[] = [
   { key: "profit", label: "Налог на прибыль" },
 ];
 
-export default function EconomyDrawer({ game, onClose, onTaxChange }: Props) {
+export default function EconomyDrawer({ game, onClose, onTaxChange, onOpenEnergy }: Props) {
   return (
     <BottomSheet title="Экономика и налоги" onClose={onClose}>
       <div className="mb-4 grid grid-cols-2 gap-2">
@@ -73,6 +74,7 @@ export default function EconomyDrawer({ game, onClose, onTaxChange }: Props) {
           снизить собираемость платежей.
         </p>
       </div>
+      <button type="button" onClick={onOpenEnergy} className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/5 text-xs font-bold text-cyan-300">Энергетика и баланс сети</button>
       <div className="mt-4 space-y-3 border-t border-slate-700 pt-3 text-sm">
         <p className="flex justify-between">
           <span className="text-slate-400">Доход / час</span>
