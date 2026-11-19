@@ -172,6 +172,7 @@ function MapView({ regions, onSelect }: MapViewProps) {
     scale: number;
   } | null>(null);
   const moved = useRef(false);
+  const pressedRegion = useRef<Region | null>(null);
   const lastTap = useRef(0);
   const tapTimer = useRef<number | null>(null);
 
@@ -192,6 +193,10 @@ function MapView({ regions, onSelect }: MapViewProps) {
     event: PointerEvent<SVGSVGElement>,
   ) => {
     event.currentTarget.setPointerCapture(event.pointerId);
+    const target = event.target as Element;
+    const regionGroup = target.closest("[data-region-id]");
+    const regionId = regionGroup?.getAttribute("data-region-id");
+    pressedRegion.current = regions.find((region) => region.id === regionId) ?? null;
     pointers.current.set(event.pointerId, {
       x: event.clientX,
       y: event.clientY,
@@ -274,6 +279,13 @@ function MapView({ regions, onSelect }: MapViewProps) {
   ) => {
     pointers.current.delete(event.pointerId);
     const remaining = Array.from(pointers.current.values());
+
+    if (remaining.length === 0) {
+      if (!moved.current && pressedRegion.current) {
+        handleRegionTap(pressedRegion.current);
+      }
+      pressedRegion.current = null;
+    }
 
     if (remaining.length === 1) {
       gesture.current = {
@@ -370,8 +382,8 @@ function MapView({ regions, onSelect }: MapViewProps) {
         {regions.map((region, index) => (
           <g
             key={region.id}
+            data-region-id={region.id}
             className="cursor-pointer"
-            onClick={() => handleRegionTap(region)}
           >
             <polygon
               points={region.polygon}
