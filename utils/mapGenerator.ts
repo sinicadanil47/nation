@@ -15,13 +15,13 @@ export interface MapCell {
   siteIndex: number;
 }
 export interface PlayerMapRegion { id: string; path: string; centroid: MapPoint; area: number }
-export interface GeneratedCountry extends (typeof worldCountries)[number] {
+export type GeneratedCountry = (typeof worldCountries)[number] & {
   path: string;
   centroid: MapPoint;
   area: number;
   cellCount: number;
   largest: boolean;
-}
+};
 export interface GeneratedMap {
   width: number;
   height: number;
