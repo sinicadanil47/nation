@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { Minus, Plus } from "lucide-react";
+import { Factory, GraduationCap, Minus, Plus, Users, UserRound } from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
 import type { GameState, TaxKey } from "@/types/game";
 
@@ -118,13 +118,13 @@ export default function EconomyDrawer({
   ];
 
   const tabClass = (active: boolean) =>
-    `min-h-10 rounded-lg px-2 text-[10px] font-bold transition-all duration-200 ${active
+    `min-h-10 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs sm:text-sm font-bold transition-all duration-200 active:scale-[0.98] ${active
       ? "bg-cyan-400/15 text-cyan-100 shadow-inner shadow-cyan-300/10"
       : "text-slate-400 hover:bg-white/5 hover:text-slate-200"}`;
 
   return (
     <BottomSheet title="Экономика" onClose={onClose}>
-      <div className="mb-4 grid grid-cols-3 gap-1 rounded-xl border border-white/5 bg-slate-950/80 p-1">
+      <div className="mb-4 grid grid-cols-3 gap-1 rounded-xl border border-white/[0.07] bg-[#090D14] p-1">
         {([
           ["tax", "Налоги"],
           ["budget", "Бюджет"],
@@ -138,7 +138,7 @@ export default function EconomyDrawer({
 
       {tab === "tax" ? (
         <section className="space-y-3">
-          <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-3">
+          <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3 shadow-lg">
             <div className="mb-3 flex items-center justify-between gap-2">
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-[.14em] text-slate-400">Налоговая кривая</p>
@@ -186,23 +186,23 @@ export default function EconomyDrawer({
           </div>
 
           {taxRows.map(([key, label]) => (
-            <div key={key} className="rounded-xl border border-white/8 bg-slate-900/45 p-3 transition-all duration-200">
+            <div key={key} className="rounded-xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3 shadow-md transition-all duration-200">
               <div className="mb-2 flex items-center justify-between gap-3 text-sm">
                 <b className="text-slate-100">{label}</b>
-                <b className="tabular-nums text-cyan-200">{game.taxes[key]}%</b>
+                <b className={`tabular-nums ${key === "vat" ? game.taxes.vat > chart.optimumVat ? "text-rose-300" : "text-emerald-300" : game.taxes[key] >= 25 ? "text-rose-300" : "text-emerald-300"}`}>{game.taxes[key]}%</b>
               </div>
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   onClick={() => onTaxChange(key, game.taxes[key] - 1)}
                   disabled={game.taxes[key] <= 0}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-800 text-slate-200 transition-all duration-200 hover:bg-slate-700 disabled:opacity-30"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] text-slate-200 transition-all duration-200 hover:bg-white/10 active:scale-[0.98] disabled:opacity-30"
                   aria-label={`Снизить: ${label}`}
                 >
                   <Minus size={14} />
                 </button>
                 <input
-                  className="min-w-0 flex-1 accent-emerald-400"
+                  className={`min-w-0 flex-1 ${game.taxes[key] >= 25 ? "accent-rose-400" : "accent-emerald-400"}`}
                   type="range"
                   min="0"
                   max="45"
@@ -253,20 +253,20 @@ export default function EconomyDrawer({
 
       {tab === "budget" ? (
         <section className="space-y-2">
+          <div className={`rounded-2xl border p-4 shadow-lg ${net >= 0 ? "border-emerald-500/20 bg-gradient-to-br from-emerald-950/35 to-[#0D111A]" : "border-rose-500/20 bg-gradient-to-br from-rose-950/30 to-[#0D111A]"}`}>
+            <p className="text-[9px] font-bold uppercase tracking-[.14em] text-slate-400">Финансовый результат</p>
+            <div className="mt-1 flex items-center justify-between gap-2"><p className="text-sm font-semibold text-slate-100">Чистый баланс</p><span className="whitespace-nowrap text-[9px] text-slate-500">МЛРД / Ч</span></div>
+            <strong className={`mt-2 block text-2xl font-extrabold tabular-nums ${net >= 0 ? "text-emerald-300" : "text-rose-300"}`}>{net >= 0 ? "+" : "−"}{formatMoney(Math.abs(net))}</strong>
+          </div>
           {budgetRows.map((row) => {
             const good = row.positive;
             return (
-              <div key={row.label} className="stat-card transition-all duration-200">
-                <div className="flex w-full items-center justify-between gap-2">
-                  <span>{row.label} · млрд/ч</span>
-                  <span className={`rounded-md border px-1.5 py-1 text-[9px] font-bold tabular-nums ${good ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-400" : "border-rose-500/30 bg-rose-500/15 text-rose-400"}`}>
-                    {good ? "+" : "−"} {formatMoney(Math.abs(row.value))}
-                  </span>
+              <div key={row.label} className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] px-3 py-3 shadow-md transition-all duration-200">
+                <span className="min-w-0 flex-1 text-xs font-semibold text-slate-300">{row.label}</span>
+                <div className="flex shrink-0 flex-col items-end gap-1">
+                  <strong className={`whitespace-nowrap text-xs tabular-nums ${good ? "text-emerald-300" : "text-rose-300"}`}>{good ? "+" : "−"}{formatMoney(Math.abs(row.value))}</strong>
+                  <small className="whitespace-nowrap tabular-nums text-[9px] text-slate-500">{(row.value * 1000 / 3600).toFixed(2)} млн/с</small>
                 </div>
-                <strong className={`tabular-nums ${good ? "text-emerald-400" : "text-rose-400"}`}>
-                  {row.value >= 0 ? "+" : "−"}{formatMoney(Math.abs(row.value))}
-                </strong>
-                <small className="tabular-nums text-slate-500">{(row.value * 1000 / 3600).toFixed(2)} млн/с</small>
               </div>
             );
           })}
@@ -280,11 +280,11 @@ export default function EconomyDrawer({
 
       {tab === "labor" ? (
         <section className="grid grid-cols-2 gap-2">
-          <div className="stat-card"><span>Рабочая сила</span><strong className="tabular-nums">{(game.workforce / 1e6).toFixed(2)} млн</strong></div>
-          <div className="stat-card"><span>Безработица</span><strong className={`tabular-nums ${unemployment > 6 ? "text-rose-400" : "text-emerald-400"}`}>{unemployment.toFixed(2)}%</strong></div>
-          <div className="stat-card"><span>Специалисты</span><strong className="tabular-nums">{(game.specialists / 1000).toFixed(1)} тыс.</strong></div>
-          <div className="stat-card"><span>Места в промышленности</span><strong className="tabular-nums">{jobs.toLocaleString("ru-RU")}</strong></div>
-          <p className="col-span-2 text-[10px] leading-relaxed text-slate-400">
+          <div className="stat-card rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3"><span className="flex items-center gap-2"><Users size={14} className="text-cyan-300"/>Рабочая сила</span><strong className="tabular-nums">{(game.workforce / 1e6).toFixed(2)} млн</strong></div>
+          <div className="stat-card rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3"><span className="flex items-center gap-2"><UserRound size={14} className="text-amber-300"/>Безработица</span><strong className={`tabular-nums ${unemployment > 6 ? "text-rose-400" : "text-emerald-400"}`}>{unemployment.toFixed(2)}%</strong></div>
+          <div className="stat-card rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3"><span className="flex items-center gap-2"><GraduationCap size={14} className="text-emerald-300"/>Специалисты</span><strong className="tabular-nums">{(game.specialists / 1000).toFixed(1)} тыс.</strong></div>
+          <div className="stat-card rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3"><span className="flex items-center gap-2"><Factory size={14} className="text-cyan-300"/>Места в промышленности</span><strong className="tabular-nums">{jobs.toLocaleString("ru-RU")}</strong></div>
+          <p className="col-span-2 rounded-xl border border-white/[0.07] bg-white/[0.03] p-3 text-[10px] leading-relaxed text-slate-400">
             {unemployment > 6
               ? "Безработица выше 6%: рейтинг президента снижается."
               : unemployment < 2
@@ -294,15 +294,15 @@ export default function EconomyDrawer({
           </p>
           <div className="col-span-2">
             {game.specialists > 0 && unemployment >= 2 ? (
-              <AdvisorCard title="Загрузка специалистов" tone="positive">
+              <AdvisorCard title="Советник по кадрам" tone="positive">
                 Есть резерв квалифицированных кадров. Выбирайте предприятия с высокой отдачей на одного работника и размещайте их в профильных регионах для бонуса специализации +20%.
               </AdvisorCard>
             ) : unemployment < 2 ? (
-              <AdvisorCard title="Кадровый дефицит" tone="warning">
+              <AdvisorCard title="Советник по кадрам" tone="warning">
                 Безработица низкая, поэтому новые мощности могут получить штраф за нехватку специалистов. Дайте системе образования подготовить резерв до расширения штата.
               </AdvisorCard>
             ) : (
-              <AdvisorCard title="Рынок труда" tone="neutral">
+              <AdvisorCard title="Советник по кадрам" tone="neutral">
                 Сопоставляйте вакансии действующих предприятий с числом свободных специалистов, чтобы не создавать простаивающие мощности.
               </AdvisorCard>
             )}

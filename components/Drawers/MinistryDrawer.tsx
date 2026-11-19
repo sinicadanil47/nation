@@ -41,7 +41,7 @@ export default function MinistryDrawer({
 
   return (
     <BottomSheet title={ministry.name} onClose={onClose}>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         <div className="stat-card flex flex-col gap-1">
           <span>Уровень ведомства</span>
           <strong className="tabular-nums">{ministry.level}</strong>
@@ -52,7 +52,29 @@ export default function MinistryDrawer({
         </div>
       </div>
 
-      <div className="mt-5 rounded-xl border border-slate-700/70 bg-slate-900/50 p-4 transition-all duration-200">
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="stat-card">
+          <span>Базовые расходы / час</span>
+          <strong className="tabular-nums">{ministry.expensePerHour.toFixed(2)} млрд</strong>
+        </div>
+        <div className="stat-card">
+          <span>Текущие расходы / час</span>
+          <strong className="tabular-nums">{actualExpense.toFixed(2)} млрд</strong>
+          {expenseDelta === 0 ? (
+            <small className="text-slate-500">Без изменения</small>
+          ) : saving > 0 ? (
+            <small className="rounded-md border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-1 text-[9px] font-bold tabular-nums text-emerald-400">
+              +{saving.toFixed(2)} млрд/ч экономии
+            </small>
+          ) : (
+            <small className="rounded-md border border-rose-500/30 bg-rose-500/15 px-1.5 py-1 text-[9px] font-bold tabular-nums text-rose-400">
+              −{extraCost.toFixed(2)} млрд/ч к расходам
+            </small>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-4 shadow-lg transition-all duration-200">
         <div className="mb-2 flex items-center justify-between gap-2 text-sm">
           <strong>Финансирование</strong>
           <strong className="tabular-nums text-amber-300">{ministry.fundingPercent}%</strong>
@@ -62,7 +84,7 @@ export default function MinistryDrawer({
             type="button"
             onClick={() => onFundingChange(ministry.id, ministry.fundingPercent - 10)}
             disabled={ministry.fundingPercent <= 50}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-800 transition-all duration-200 disabled:opacity-35"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.06] transition-all duration-200 active:scale-[0.98] disabled:opacity-35"
             aria-label="Снизить финансирование"
           >
             <Minus size={16} />
@@ -92,29 +114,7 @@ export default function MinistryDrawer({
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <div className="stat-card">
-          <span>Базовые расходы / час</span>
-          <strong className="tabular-nums">{ministry.expensePerHour.toFixed(2)} млрд</strong>
-        </div>
-        <div className="stat-card">
-          <span>Текущие расходы / час</span>
-          <strong className="tabular-nums">{actualExpense.toFixed(2)} млрд</strong>
-          {expenseDelta === 0 ? (
-            <small className="text-slate-500">Без изменения</small>
-          ) : saving > 0 ? (
-            <small className="rounded-md border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-1 text-[9px] font-bold tabular-nums text-emerald-400">
-              +{saving.toFixed(2)} млрд/ч экономии
-            </small>
-          ) : (
-            <small className="rounded-md border border-rose-500/30 bg-rose-500/15 px-1.5 py-1 text-[9px] font-bold tabular-nums text-rose-400">
-              −{extraCost.toFixed(2)} млрд/ч к расходам
-            </small>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-3 rounded-xl border border-cyan-500/20 bg-cyan-500/10 p-3">
+      <div className="mt-3 rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-950/25 to-[#0D111A] p-4 shadow-lg">
         <p className="mb-1 text-[9px] font-bold uppercase tracking-[.14em] text-slate-400">Советник ведомства</p>
         <p className="text-[11px] leading-relaxed text-slate-200">{advisor}</p>
       </div>

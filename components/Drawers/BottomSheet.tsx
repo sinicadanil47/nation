@@ -21,7 +21,7 @@ export default function BottomSheet({
       role="presentation"
     >
       <section
-        className="bottom-sheet max-h-[86dvh] w-full max-w-[480px] overflow-y-auto rounded-t-[28px] border border-slate-700 bg-[#151F32] px-5 pb-[calc(24px+env(safe-area-inset-bottom))] pt-3 shadow-2xl"
+        className="bottom-sheet max-h-[88dvh] w-full max-w-[520px] overflow-y-auto rounded-t-[28px] border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] px-4 pb-[calc(24px+env(safe-area-inset-bottom))] pt-3 shadow-[0_-18px_70px_rgba(0,0,0,.58)] sm:px-5"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -33,7 +33,7 @@ export default function BottomSheet({
           <button
             type="button"
             onClick={onClose}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-800 text-slate-200"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.05] text-slate-200 transition-all duration-200 active:scale-[0.98]"
             aria-label="Закрыть"
           >
             <X size={20} />

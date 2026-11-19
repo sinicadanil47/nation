@@ -34,18 +34,18 @@ export default function PresidentDrawer({
 
   return (
     <BottomSheet title="Власть" onClose={onClose}>
-      <div className="mb-4 grid grid-cols-2 gap-2">
+      <div className="mb-4 flex rounded-xl border border-white/[0.07] bg-[#090D14] p-1">
         <button
           type="button"
           onClick={() => setSection("president")}
-          className={`min-h-10 rounded-lg text-xs font-bold ${section === "president" ? "bg-cyan-700" : "bg-slate-800 text-slate-400"}`}
+          className={`min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-all duration-200 active:scale-[0.98] ${section === "president" ? "bg-gradient-to-b from-[#26384a] to-[#192535] text-cyan-100 shadow-lg" : "text-slate-500 hover:text-slate-200"}`}
         >
           Президент
         </button>
         <button
           type="button"
           onClick={() => setSection("parliament")}
-          className={`min-h-10 rounded-lg text-xs font-bold ${section === "parliament" ? "bg-cyan-700" : "bg-slate-800 text-slate-400"}`}
+          className={`min-h-10 flex-1 rounded-lg px-3 text-xs font-bold transition-all duration-200 active:scale-[0.98] ${section === "parliament" ? "bg-gradient-to-b from-[#26384a] to-[#192535] text-cyan-100 shadow-lg" : "text-slate-500 hover:text-slate-200"}`}
         >
           Парламент
         </button>
@@ -53,7 +53,7 @@ export default function PresidentDrawer({
 
       {section === "president" ? (
         <>
-          <div className="mb-4 rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-3">
+          <div className="mb-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/35 to-[#0D111A] p-4 shadow-lg">
             <div className="flex flex-col items-start gap-1">
               <span className="text-xs text-slate-400">Рейтинг правительства</span>
               <strong className="text-xl text-emerald-300">{Math.round(game.rating)}%</strong>
@@ -144,33 +144,42 @@ export default function PresidentDrawer({
         </>
       ) : (
         <div className="space-y-3">
-          <section className="rounded-xl border border-slate-700 bg-slate-900/50 p-3">
+          <section className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-4 shadow-lg">
             <div className="flex justify-between text-xs">
               <b>Распределение мест</b>
               <b>{game.parliament.totalSeats}</b>
             </div>
-            <div className="mt-3 flex h-4 overflow-hidden rounded-full bg-slate-800">
+            <div className="mt-3 flex h-5 overflow-hidden rounded-lg bg-slate-800 ring-1 ring-white/10">
               {game.parliament.factions.map((faction, index) => (
                 <div
                   key={faction.id}
                   title={faction.name}
-                  style={{ width: `${(faction.seats / game.parliament.totalSeats) * 100}%` }}
-                  className={index % 2 ? "bg-indigo-500" : "bg-cyan-500"}
+                  style={{ width: `${game.parliament.totalSeats > 0 ? (faction.seats / game.parliament.totalSeats) * 100 : 0}%`, backgroundColor: ["#34d399", "#60a5fa", "#fbbf24", "#c084fc", "#fb7185", "#22d3ee"][index % 6] }}
+                  className="transition-all duration-200"
                 />
               ))}
             </div>
+            <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2">
+              {game.parliament.factions.map((faction, index) => (
+                <div key={faction.id} className="flex min-w-0 items-center gap-2 text-[10px] text-slate-400">
+                  <i className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: ["#34d399", "#60a5fa", "#fbbf24", "#c084fc", "#fb7185", "#22d3ee"][index % 6] }} />
+                  <span className="min-w-0 truncate">{faction.name}</span>
+                  <b className="ml-auto shrink-0 tabular-nums text-slate-200">{faction.seats}</b>
+                </div>
+              ))}
+            </div>
             {game.parliament.factions.map((faction) => (
-              <div key={faction.id} className="mt-3">
+              <div key={faction.id} className="mt-3 rounded-xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3">
                 <div className="flex justify-between text-xs">
                   <span>{faction.name} · {faction.seats} мест</span>
                   <b>{faction.loyalty}%</b>
                 </div>
-                <div className="mt-1 flex gap-2">
+                <div className="mt-2 grid grid-cols-2 gap-2.5">
                   <button
                     type="button"
                     disabled={faction.loyalty >= 100 || game.budget.treasury < 7.5}
                     onClick={() => onNegotiateFaction(faction.id, 5)}
-                    className="rounded-md bg-slate-800 px-2 py-2 text-[10px] disabled:opacity-40"
+                    className="min-h-10 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2 py-2 text-[10px] font-bold text-emerald-200 transition-all duration-200 active:scale-[0.98] disabled:opacity-40"
                   >
                     Торг +5 · 7,5 млрд
                   </button>
@@ -178,7 +187,7 @@ export default function PresidentDrawer({
                     type="button"
                     disabled={faction.loyalty < 5 || game.budget.treasury < 7.5}
                     onClick={() => onNegotiateFaction(faction.id, -5)}
-                    className="rounded-md bg-slate-800 px-2 py-2 text-[10px] disabled:opacity-40"
+                    className="min-h-10 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2 py-2 text-[10px] font-bold text-rose-200 transition-all duration-200 active:scale-[0.98] disabled:opacity-40"
                   >
                     Снизить поддержку
                   </button>
