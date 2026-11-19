@@ -98,3 +98,102 @@
 @media (prefers-reduced-motion: reduce) {
   .ministry-card, .bottom-sheet .stat-card { transition: none; }
 }
+
+
+/* Final responsive pass: safe-area aware sheets, compact screens and overflow guards. */
+html,
+body {
+  min-width: 320px;
+  min-height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+.nation-shell,
+.nation-shell > * {
+  min-width: 0;
+}
+
+.sheet-backdrop {
+  padding-top: env(safe-area-inset-top);
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right));
+  overscroll-behavior: contain;
+}
+
+.bottom-sheet {
+  width: min(100%, 520px);
+  max-height: min(88dvh, 900px);
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  scrollbar-width: thin;
+  scrollbar-color: #405168 transparent;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+.bottom-sheet > * {
+  min-width: 0;
+}
+
+.bottom-sheet :where(.grid, .flex) {
+  min-width: 0;
+}
+
+.bottom-sheet :where(p, span, strong, b, label, h2, h3) {
+  overflow-wrap: anywhere;
+}
+
+.bottom-sheet :where(input, select, textarea) {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.bottom-sheet textarea {
+  resize: vertical;
+}
+
+.bottom-sheet button {
+  max-width: 100%;
+}
+
+[data-sonner-toaster] {
+  z-index: 100 !important;
+  padding-top: max(10px, env(safe-area-inset-top));
+}
+
+@media (max-width: 360px) {
+  .bottom-sheet {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .bottom-sheet .stat-card {
+    padding: 9px;
+  }
+
+  .bottom-sheet .stat-card > strong {
+    font-size: 13px;
+  }
+
+  .bottom-sheet :where(.action-primary, .action-secondary) {
+    gap: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-height: 620px) {
+  .bottom-sheet {
+    max-height: 92dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-backdrop,
+  .bottom-sheet {
+    scroll-behavior: auto;
+  }
+}
