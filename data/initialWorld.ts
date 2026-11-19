@@ -138,6 +138,7 @@ export const initialWorld: GameState = {
   country: "Республика Нордланд",
   day: 1,
   hour: 8,
+  minute: 0,
   speed: 1,
   rating: 74,
   population: 33.6,
