@@ -15,7 +15,7 @@ export function simulateTick(state: GameState): GameState {
   );
   const collectionRate = Math.max(
     45,
-    Math.min(98, 100 - shadowEconomy * 0.72),
+    Math.min(98, 100 - shadowEconomy * 0.778),
   );
   const taxRevenue =
     regionalBaseIncome *
