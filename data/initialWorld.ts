@@ -64,17 +64,11 @@ export const initialRegions: Region[] = regionNames.map((name, index) => ({
   cities: [
     {
       name: cityNames[index],
-      x: regionCenter(regionShapes[index]).x,
-      y: regionCenter(regionShapes[index]).y,
+      x: generatedMap.playerRegions[index].centroid.x,
+      y: generatedMap.playerRegions[index].centroid.y,
       size: index === 4 ? 7 : 4,
     },
-    {
-      name: `${cityNames[index]}-2`,
-      x: 150 + (index % 4) * 60,
-      y: 105 + Math.floor(index / 4) * 105,
-      size: 3,
-    },
-  ],
+],
 }));
 
 export const initialMinistries: Ministry[] = [
