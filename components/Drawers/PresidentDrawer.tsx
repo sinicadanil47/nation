@@ -18,6 +18,7 @@ export default function PresidentDrawer({
   onPublishAddress,
 }: Props) {
   const [address, setAddress] = useState("");
+  const formatCooldown = (seconds: number) => String(Math.floor(seconds / 60)).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
 
   return (
     <BottomSheet title="Офис Президента" onClose={onClose}>
@@ -62,9 +63,9 @@ export default function PresidentDrawer({
                 type="button"
                 disabled={cooldown > 0}
                 onClick={() => onIssueDecree(decree.id)}
-                className="min-h-11 shrink-0 rounded-lg bg-blue-600 px-3 text-xs font-bold disabled:bg-slate-700"
+                className="min-h-11 shrink-0 rounded-lg bg-amber-600 px-3 text-xs font-bold disabled:bg-slate-700"
               >
-                {cooldown > 0 ? `${cooldown} ч` : "Издать"}
+                {cooldown > 0 ? formatCooldown(cooldown) : "Издать"}
               </button>
             </div>
           </div>
