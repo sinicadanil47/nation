@@ -10,6 +10,15 @@ type Pointer = { x: number; y: number };
 type GestureStart = { point: Pointer; travel: number; regionId: string | null; countryId: string | null };
 const world = generateMap();
 const distance = (a: Pointer, b: Pointer) => Math.hypot(a.x - b.x, a.y - b.y);
+const relationColor = (value: number) => {
+  const relation = Math.max(-100, Math.min(100, value));
+  const red = [239, 68, 68], neutral = [148, 163, 184], green = [16, 185, 129];
+  const from = relation < 0 ? red : neutral;
+  const to = relation < 0 ? neutral : green;
+  const progress = Math.abs(relation) / 100;
+  const rgb = from.map((channel, index) => Math.round(channel + (to[index] - channel) * progress));
+  return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+};
 
 export default function CountryMap({
   regions, activeId, selectedCountryId, foreignCountries, onSelect, onSelectCountry,
@@ -133,7 +142,7 @@ export default function CountryMap({
         <g transform={`translate(${view.x} ${view.y}) translate(${world.width / 2} ${world.height / 2}) scale(${view.zoom}) translate(-${world.width / 2} -${world.height / 2})`}>
           {world.cells.filter(cell => cell.owner === "foreign").map(cell => (
             <path key={cell.id} data-country-id={cell.countryId} d={cell.path}
-              fill={selectedCountryId === cell.countryId ? "#263D53" : mapMode === "relations" ? (() => { const name = world.countries.find(country => country.id === cell.countryId)?.name; const relation = foreignCountries.find(country => country.name === name)?.relations ?? 0; return relation < 0 ? `rgb(${Math.round(145 + Math.abs(relation) * .9)}, ${Math.round(48 + (100 + relation) * .12)}, 65)` : `rgb(${Math.round(35 + (100 - relation) * .55)}, ${Math.round(105 + relation * .9)}, ${Math.round(75 + relation * .35)})`; })() : cell.fill}
+              fill={selectedCountryId === cell.countryId ? "#263D53" : mapMode === "relations" ? relationColor(foreignCountries.find(country => country.id === cell.countryId)?.relations ?? 0) : cell.fill}
               stroke={cell.fill} strokeWidth="1.8" strokeLinejoin="round"/>
           ))}
           <path d={boundaryPaths.foreign} fill="none" stroke="#1E293B" strokeWidth="2.1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>
@@ -164,6 +173,7 @@ export default function CountryMap({
         </g>
       </svg>
       <div className="absolute left-1/2 top-[258px] z-20 flex -translate-x-1/2 rounded-xl border border-slate-600 bg-slate-950/90 p-1 shadow-lg" onPointerDown={event => event.stopPropagation()}><button type="button" onClick={() => setMapMode("political")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "political" ? "bg-cyan-600 text-white" : "text-slate-400"}`}>Политическая</button><button type="button" onClick={() => setMapMode("relations")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "relations" ? "bg-emerald-700 text-white" : "text-slate-400"}`}>Отношения</button></div>
+      {mapMode === "relations" ? <div className="absolute left-1/2 top-[304px] z-20 -translate-x-1/2 rounded-lg border border-slate-700 bg-slate-950/85 px-3 py-1.5 text-[9px] text-slate-300"><div className="mb-1 flex justify-between"><span>−100</span><span>0</span><span>+100</span></div><div className="h-2 w-44 rounded-full" style={{ background: "linear-gradient(90deg, #ef4444 0%, #94a3b8 50%, #10b981 100%)" }} /></div> : null}
       <div className="map-controls absolute bottom-28 right-4 z-20 flex flex-col gap-2" onPointerDown={event => event.stopPropagation()}>
         <button aria-label="Приблизить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom * 1.2)}><Plus/></button>
         <button aria-label="Отдалить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom / 1.2)}><Minus/></button>
