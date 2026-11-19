@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Activity,
   Building2,
   Coins,
   Factory,
@@ -13,14 +12,12 @@ import {
   RotateCcw,
   Shield,
   ShieldCheck,
-  SlidersHorizontal,
   TrendingUp,
   Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
-import BottomSheet from "@/components/Drawers/BottomSheet";
 import EconomyDrawer from "@/components/Drawers/EconomyDrawer";
 import EnergyDrawer from "@/components/Drawers/EnergyDrawer";
 import MinistryDrawer from "@/components/Drawers/MinistryDrawer";
