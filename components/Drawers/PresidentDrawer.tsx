@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
@@ -24,7 +23,6 @@ export default function PresidentDrawer({
   onNegotiateFaction,
   onVoteLaw,
 }: Props) {
-  const [address, setAddress] = useState("");
   const [factionCardsRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
   const [lawListRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
   const [section, setSection] = useState<"president" | "parliament">("president");
@@ -50,7 +48,7 @@ export default function PresidentDrawer({
         <motion.div key={section} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.16 }}>
       {section === "president" ? (
         <>
-          <div className="mb-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/35 to-[#0D111A] p-4 shadow-lg">
+          <div className="mb-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/35 via-[#111c25] to-[#0D111A] p-4 shadow-lg">
             <div className="flex flex-col items-start gap-1">
               <span className="text-xs text-slate-400">Рейтинг правительства</span>
               <strong className="text-xl text-emerald-300">{Math.round(game.rating)}%</strong>
@@ -90,7 +88,7 @@ export default function PresidentDrawer({
             return (
               <div
                 key={decree.id}
-                className="mb-2 rounded-xl border border-slate-700 bg-slate-900/40 p-3"
+                className="mb-2 rounded-2xl border border-amber-300/15 bg-gradient-to-br from-[#202333] to-[#101722] p-3 shadow-md"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -112,33 +110,13 @@ export default function PresidentDrawer({
             );
           })}
 
-          <div className="mt-4">
-            <label
-              htmlFor="presidential-address"
-              className="mb-2 block text-xs font-bold text-slate-400"
-            >
-              Обращение к нации
-            </label>
-            <textarea
-              id="presidential-address"
-              value={address}
-              onChange={(event) => setAddress(event.target.value)}
-              placeholder="Текст обращения..."
-              maxLength={500}
-              className="min-h-24 w-full rounded-xl border border-slate-700 bg-slate-900 p-3 text-sm outline-none focus:border-blue-500"
-            />
-            <button
-              type="button"
-              disabled={!address.trim()}
-              onClick={() => {
-                onPublishAddress(address);
-                setAddress("");
-              }}
-              className="mt-2 min-h-11 w-full rounded-xl bg-blue-600 text-sm font-bold disabled:opacity-40"
-            >
-              Опубликовать обращение
+          <section className="mt-4 rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-950/30 to-[#0D111A] p-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-cyan-300">Обращение к нации</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-400">Публичное выступление укрепляет доверие и мобилизует общественную поддержку. Повторное выступление доступно после завершения периода ожидания.</p>
+            <button type="button" onClick={() => onPublishAddress("Президент выступил с обращением к нации: правительство подтверждает курс на развитие, стабильность и благополучие граждан.")} className="action-primary mt-3 w-full">
+              Выступить перед гражданами
             </button>
-          </div>
+          </section>
         </>
       ) : (
         <div className="space-y-3">
@@ -221,19 +199,18 @@ export default function PresidentDrawer({
                 <div className="min-w-0">
                   <b className="break-words text-xs">{law.name}</b>
                   <p className="mt-1 text-[10px] text-slate-400">{law.description}</p>
-                  <p className="mt-1 text-[10px] text-slate-500">Цена: {law.cost} млрд</p>
+                  <p className="mt-1 text-[10px] font-semibold text-emerald-300">Принятие бесплатно для казны · политические последствия сохраняются</p>
                 </div>
                 <button
                   type="button"
                   disabled={
                     law.passed ||
                     votes <= game.parliament.totalSeats / 2 ||
-                    game.budget.treasury < law.cost
                   }
                   onClick={() => onVoteLaw(law.id)}
                   className="min-h-9 shrink-0 rounded-lg bg-emerald-700 px-3 text-[10px] font-bold disabled:bg-slate-700"
                 >
-                  {law.passed ? "Принят" : "Голосовать"}
+                  {law.passed ? "Принят" : "Принять закон"}
                 </button>
               </div>
             </article>

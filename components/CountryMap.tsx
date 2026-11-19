@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { LocateFixed, Minus, Plus } from "lucide-react";
 import type { PointerEvent, WheelEvent } from "react";
 import type { ForeignCountry, Region } from "@/types/game";
 import { generateMap } from "@/utils/mapGenerator";
@@ -164,7 +163,7 @@ export default function CountryMap({
             const capital = index === 4, city = shape.centroid;
             return <g key={shape.id} pointerEvents="none">
               {activeId === shape.id ? <path d={shape.path} fill="#2A6076" fillOpacity=".32" stroke="#7DD3FC" strokeWidth="2.5" vectorEffect="non-scaling-stroke"/> : null}
-              <circle cx={city.x} cy={city.y} r={capital ? 10 : 7} fill="#F5C96B" stroke="#FFF0B8" strokeWidth="2"/>
+              <circle cx={city.x} cy={city.y} r={capital ? 10 : 3.2} fill={capital ? "#F5C96B" : "#94A3B8"} stroke={capital ? "#FFF0B8" : "#CBD5E1"} strokeWidth={capital ? 2 : 1.2}/>
               {capital ? <><circle cx={city.x} cy={city.y} r="16" fill="none" stroke="#F5C96B" strokeWidth="2.4" className="capital-ring"/><circle cx={city.x} cy={city.y} r="23" fill="none" stroke="#F5C96B" strokeOpacity=".7" strokeWidth="1.5" className="capital-ring capital-ring-delay"/></> : null}
               {lod >= 2 || capital ? <text x={city.x} y={city.y + 18} textAnchor="middle" fill="#F8FAFC" fontSize="9.5" fontWeight="600"
                 stroke="#060911" strokeWidth="8" paintOrder="stroke">{region.city}</text> : null}
@@ -172,13 +171,9 @@ export default function CountryMap({
           })}
         </g>
       </svg>
-      <div className="absolute left-1/2 top-[258px] z-20 flex -translate-x-1/2 rounded-xl border border-slate-600 bg-slate-950/90 p-1 shadow-lg" onPointerDown={event => event.stopPropagation()}><button type="button" onClick={() => setMapMode("political")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "political" ? "bg-cyan-600 text-white" : "text-slate-400"}`}>Политическая</button><button type="button" onClick={() => setMapMode("relations")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "relations" ? "bg-emerald-700 text-white" : "text-slate-400"}`}>Отношения</button></div>
-      {mapMode === "relations" ? <div className="absolute left-1/2 top-[304px] z-20 -translate-x-1/2 rounded-lg border border-slate-700 bg-slate-950/85 px-3 py-1.5 text-[9px] text-slate-300"><div className="mb-1 flex justify-between"><span>−100</span><span>0</span><span>+100</span></div><div className="h-2 w-44 rounded-full" style={{ background: "linear-gradient(90deg, #ef4444 0%, #94a3b8 50%, #10b981 100%)" }} /></div> : null}
-      <div className="map-controls absolute bottom-28 right-4 z-20 flex flex-col gap-2" onPointerDown={event => event.stopPropagation()}>
-        <button aria-label="Приблизить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom * 1.2)}><Plus/></button>
-        <button aria-label="Отдалить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom / 1.2)}><Minus/></button>
-        <button aria-label="Показать весь мир" onClick={() => applyView(0, 0, .25)}><LocateFixed/></button>
-      </div>
+      <div className="absolute bottom-[88px] left-1/2 z-20 flex -translate-x-1/2 rounded-xl border border-slate-600/70 bg-slate-950/80 p-1 shadow-lg backdrop-blur-xl" onPointerDown={event => event.stopPropagation()}><button type="button" onClick={() => setMapMode("political")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "political" ? "bg-cyan-600 text-white" : "text-slate-400"}`}>Политическая</button><button type="button" onClick={() => setMapMode("relations")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "relations" ? "bg-emerald-700 text-white" : "text-slate-400"}`}>Отношения</button></div>
+      {mapMode === "relations" ? <div className="absolute left-1/2 bottom-[132px] z-20 -translate-x-1/2 rounded-lg border border-slate-700 bg-slate-950/85 px-3 py-1.5 text-[9px] text-slate-300"><div className="mb-1 flex justify-between"><span>−100</span><span>0</span><span>+100</span></div><div className="h-2 w-44 rounded-full" style={{ background: "linear-gradient(90deg, #ef4444 0%, #94a3b8 50%, #10b981 100%)" }} /></div> : null}
+
       <div className="map-zoom-indicator absolute bottom-28 left-4 z-10">{Math.round(view.zoom * 100)}%</div>
     </div>
   );
