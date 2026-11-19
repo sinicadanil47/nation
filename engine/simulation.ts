@@ -99,7 +99,7 @@ export function simulateTick(state: GameState): GameState {
     ...state,
     day,
     hour,
-    lastTick: Date.now(),
+    lastTick: state.lastTick + 3_600_000,
     rating,
     budget: {
       ...state.budget,
