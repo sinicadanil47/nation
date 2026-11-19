@@ -1,19 +1,173 @@
 "use client";
-import {useRef,useState} from "react";import {LocateFixed,Minus,Plus} from "lucide-react";import type {PointerEvent,WheelEvent} from "react";import type {Region} from "@/types/game";import {generateMap} from "@/utils/mapGenerator";import type {WorldCountry} from "@/data/worldCountries";
-type P={x:number;y:number};const dist=(a:P,b:P)=>Math.hypot(a.x-b.x,a.y-b.y),world=generateMap();
-type NationInfo=WorldCountry&{path:string;centroid:P;area:number;cellCount:number};
-export default function CountryMap({regions,activeId,selectedCountryId,onSelect,onSelectCountry}:{regions:Region[];activeId:string|null;selectedCountryId:string|null;onSelect:(r:Region)=>void;onSelectCountry:(c:NationInfo)=>void}){
- const [view,setView]=useState({x:0,y:0,zoom:.85}),vr=useRef(view),pointers=useRef(new Map<number,P>()),starts=useRef(new Map<number,{p:P;travel:number;regionId:string|null;countryId:string|null}>()),pinch=useRef<{d:number;z:number}|null>(null),dragged=useRef(false);
- const apply=(x:number,y:number,z:number)=>{z=Math.max(.22,Math.min(3.5,z));const mx=Math.max(0,world.width*(z-1)/2+world.width*.08),my=Math.max(0,world.height*(z-1)/2+world.height*.08),n={x:Math.max(-mx,Math.min(mx,x)),y:Math.max(-my,Math.min(my,y)),zoom:z};vr.current=n;setView(n)};
- const down=(e:PointerEvent<HTMLDivElement>)=>{if((e.target as HTMLElement).closest("button"))return;e.currentTarget.setPointerCapture(e.pointerId);const p={x:e.clientX,y:e.clientY},el=(e.target as Element).closest("[data-region-id],[data-country-id]");pointers.current.set(e.pointerId,p);starts.current.set(e.pointerId,{p,travel:0,regionId:el?.getAttribute("data-region-id")??null,countryId:el?.getAttribute("data-country-id")??null});if(pointers.current.size===2){const [a,b]=[...pointers.current.values()];pinch.current={d:dist(a,b),z:vr.current.zoom};dragged.current=true}};
- const move=(e:PointerEvent<HTMLDivElement>)=>{if(!pointers.current.has(e.pointerId))return;const p={x:e.clientX,y:e.clientY},old=pointers.current.get(e.pointerId)!;pointers.current.set(e.pointerId,p);const st=starts.current.get(e.pointerId);if(st){st.travel=Math.max(st.travel,dist(st.p,p));if(st.travel>=6)dragged.current=true}const sx=world.width/Math.max(1,e.currentTarget.clientWidth),sy=world.height/Math.max(1,e.currentTarget.clientHeight);if(pointers.current.size>1&&pinch.current){const [a,b]=[...pointers.current.values()];apply(vr.current.x,vr.current.y,pinch.current.z*dist(a,b)/Math.max(1,pinch.current.d))}else apply(vr.current.x+(p.x-old.x)*sx/vr.current.zoom,vr.current.y+(p.y-old.y)*sy/vr.current.zoom,vr.current.zoom)};
- const end=(e:PointerEvent<HTMLDivElement>,cancel=false)=>{const st=starts.current.get(e.pointerId);pointers.current.delete(e.pointerId);starts.current.delete(e.pointerId);if(pointers.current.size<2)pinch.current=null;if(!cancel&&st&&st.travel<6&&!dragged.current&&pointers.current.size===0){if(st.regionId){const r=regions.find(q=>q.id===st.regionId);if(r)onSelect(r)}else if(st.countryId){const c=world.countries.find(q=>q.id===st.countryId);if(c)onSelectCountry(c)}}if(!pointers.current.size)dragged.current=false};
- const wheel=(e:WheelEvent<HTMLDivElement>)=>{e.preventDefault();apply(vr.current.x,vr.current.y,vr.current.zoom*Math.exp(-e.deltaY*.001))},lod=view.zoom<.45?0:view.zoom<.95?1:2;
- return <div className="country-map fixed inset-0 z-0 h-dvh w-full touch-none overflow-hidden select-none" onPointerDown={down} onPointerMove={move} onPointerUp={e=>end(e)} onPointerCancel={e=>end(e,true)} onWheel={wheel}><svg viewBox={"0 0 "+world.width+" "+world.height} preserveAspectRatio="xMidYMid meet" className="h-full w-full"><defs><radialGradient id="world-ocean"><stop stopColor="#102238"/><stop offset=".68" stopColor="#091321"/><stop offset="1" stopColor="#060911"/></radialGradient><pattern id="world-depth" width="240" height="200" patternUnits="userSpaceOnUse"><path d="M-30 70Q45 5 120 70T270 65M-20 115Q55 50 130 115T280 110M-30 160Q45 95 120 160T270 155" fill="none" stroke="#547d95" strokeOpacity=".13" strokeWidth="2"/></pattern></defs><rect width={world.width} height={world.height} fill="url(#world-ocean)"/><rect width={world.width} height={world.height} fill="url(#world-depth)"/><g transform={"translate("+view.x+" "+view.y+") translate("+world.width/2+" "+world.height/2+") scale("+view.zoom+") translate(-"+world.width/2+" -"+world.height/2+")"}>
- {world.cells.filter(c=>c.owner==="foreign").map(c=><path key={c.id} data-country-id={c.countryId} d={c.path} fill={selectedCountryId===c.countryId?"#263b50":c.fill} stroke="#1E293B" strokeOpacity=".12" strokeWidth="2" vectorEffect="non-scaling-stroke"/>)}
- {world.countries.map(c=><g key={c.id} pointerEvents="none"><path d={c.path} fill="none" stroke={selectedCountryId===c.id?"#67C8F2":"#1E293B"} strokeWidth={selectedCountryId===c.id?5:2.5} vectorEffect="non-scaling-stroke"/>{lod>=1||c.economy>=82?<text x={c.centroid.x} y={c.centroid.y} textAnchor="middle" fill="#9AA9BC" opacity={lod===0?".28":".74"} fontSize="31" fontWeight="600" letterSpacing="3">{c.name.toUpperCase()}</text>:null}</g>)}
- {world.cells.filter(c=>c.owner==="player").map(c=><path key={c.id} data-region-id={c.id.replace("player-","")} d={c.path} fill="#10283D" stroke="#244966" strokeWidth="2.2" vectorEffect="non-scaling-stroke"/>)}
- <path d={world.playerRegions.map(r=>r.path).join(" ")} fill="none" stroke="#38BDF8" strokeWidth="2.8" vectorEffect="non-scaling-stroke" pointerEvents="none"/>
- {world.playerRegions.map((s,i)=>{const r=regions[i];if(!r)return null;const capital=i===4,show=capital||lod>=2;return <g key={r.id} pointerEvents="none">{activeId===r.id?<path d={s.path} fill="#2A6076" fillOpacity=".38" stroke="#7DD3FC" strokeWidth="4" vectorEffect="non-scaling-stroke"/>:null}<circle cx={s.centroid.x} cy={s.centroid.y} r={capital?9:6.5} fill="#F5C96B" stroke="#FFF0B8" strokeWidth="2"/>{capital?<><circle cx={s.centroid.x} cy={s.centroid.y} r="15" fill="none" stroke="#F5C96B" strokeWidth="2.4" className="capital-ring"/><circle cx={s.centroid.x} cy={s.centroid.y} r="22" fill="none" stroke="#F5C96B" strokeOpacity=".65" strokeWidth="1.4" className="capital-ring capital-ring-delay"/></>:null}{show?<text x={s.centroid.x} y={s.centroid.y+14} textAnchor="middle" fill="#F8FAFC" fontSize="25" fontWeight="600" stroke="#060911" strokeWidth="8" paintOrder="stroke">{r.city}</text>:null}</g>})}
- </g></svg><div className="map-controls absolute bottom-28 right-4 z-20 flex flex-col gap-2" onPointerDown={e=>e.stopPropagation()}><button aria-label="Приблизить" onClick={()=>apply(vr.current.x,vr.current.y,vr.current.zoom*1.2)}><Plus/></button><button aria-label="Отдалить" onClick={()=>apply(vr.current.x,vr.current.y,vr.current.zoom/1.2)}><Minus/></button><button aria-label="Показать весь мир" onClick={()=>apply(0,0,.22)}><LocateFixed/></button></div><div className="map-zoom-indicator absolute bottom-28 left-4 z-10">{Math.round(view.zoom*100)}%</div></div>
+import { useEffect, useMemo, useRef, useState } from "react";
+import { LocateFixed, Minus, Plus } from "lucide-react";
+import type { PointerEvent, WheelEvent } from "react";
+import type { Region } from "@/types/game";
+import { generateMap } from "@/utils/mapGenerator";
+import type { GeneratedCountry, MapPoint } from "@/utils/mapGenerator";
+
+type Pointer = { x: number; y: number };
+type GestureStart = { point: Pointer; travel: number; regionId: string | null; countryId: string | null };
+const world = generateMap();
+const distance = (a: Pointer, b: Pointer) => Math.hypot(a.x - b.x, a.y - b.y);
+
+export default function CountryMap({
+  regions, activeId, selectedCountryId, onSelect, onSelectCountry,
+}: {
+  regions: Region[]; activeId: string | null; selectedCountryId: string | null;
+  onSelect: (region: Region) => void; onSelectCountry: (country: GeneratedCountry) => void;
+}) {
+  const [view, setView] = useState({ x: 0, y: 0, zoom: 1 });
+  const viewRef = useRef(view);
+  const pointers = useRef(new Map<number, Pointer>());
+  const starts = useRef(new Map<number, GestureStart>());
+  const pinch = useRef<{ distance: number; zoom: number } | null>(null);
+  const dragged = useRef(false);
+
+  const applyView = (x: number, y: number, zoom: number) => {
+    const nextZoom = Math.max(.25, Math.min(3.5, zoom));
+    const maxX = world.width * .42 * nextZoom, maxY = world.height * .42 * nextZoom;
+    const next = { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)), zoom: nextZoom };
+    viewRef.current = next; setView(next);
+  };
+
+  useEffect(() => {
+    const baseScale = Math.max(window.innerWidth / world.width, window.innerHeight / world.height);
+    const targetZoom = Math.max(.95, Math.min(3.5, .60 * window.innerWidth / Math.max(1, world.playerBounds.width * baseScale)));
+    applyView(world.width / 2 - world.playerBounds.centerX * targetZoom, world.height / 2 - world.playerBounds.centerY * targetZoom, targetZoom);
+    const onResize = () => {
+      const scale = Math.max(window.innerWidth / world.width, window.innerHeight / world.height);
+      const zoom = Math.max(.95, Math.min(3.5, .60 * window.innerWidth / Math.max(1, world.playerBounds.width * scale)));
+      applyView(world.width / 2 - world.playerBounds.centerX * zoom, world.height / 2 - world.playerBounds.centerY * zoom, zoom);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button")) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const point = { x: event.clientX, y: event.clientY };
+    const target = (event.target as Element).closest("[data-region-id],[data-country-id]");
+    pointers.current.set(event.pointerId, point);
+    starts.current.set(event.pointerId, {
+      point, travel: 0,
+      regionId: target?.getAttribute("data-region-id") ?? null,
+      countryId: target?.getAttribute("data-country-id") ?? null,
+    });
+    if (pointers.current.size === 2) {
+      const [a, b] = [...pointers.current.values()];
+      pinch.current = { distance: distance(a, b), zoom: viewRef.current.zoom };
+      dragged.current = true;
+    }
+  };
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (!pointers.current.has(event.pointerId)) return;
+    const point = { x: event.clientX, y: event.clientY };
+    const previous = pointers.current.get(event.pointerId)!;
+    pointers.current.set(event.pointerId, point);
+    const start = starts.current.get(event.pointerId);
+    if (start) { start.travel = Math.max(start.travel, distance(start.point, point)); if (start.travel >= 6) dragged.current = true; }
+    const baseScale = Math.max(event.currentTarget.clientWidth / world.width, event.currentTarget.clientHeight / world.height);
+    if (pointers.current.size > 1 && pinch.current) {
+      const [a, b] = [...pointers.current.values()];
+      applyView(viewRef.current.x, viewRef.current.y, pinch.current.zoom * distance(a, b) / Math.max(1, pinch.current.distance));
+    } else {
+      applyView(viewRef.current.x + (point.x - previous.x) / baseScale / viewRef.current.zoom,
+        viewRef.current.y + (point.y - previous.y) / baseScale / viewRef.current.zoom, viewRef.current.zoom);
+    }
+  };
+  const finishPointer = (event: PointerEvent<HTMLDivElement>, cancelled = false) => {
+    const start = starts.current.get(event.pointerId);
+    pointers.current.delete(event.pointerId); starts.current.delete(event.pointerId);
+    if (pointers.current.size < 2) pinch.current = null;
+    if (!cancelled && start && start.travel < 6 && !dragged.current && pointers.current.size === 0) {
+      if (start.regionId) {
+        const region = regions.find(item => item.id === start.regionId);
+        if (region) onSelect(region);
+      } else if (start.countryId) {
+        const country = world.countries.find(item => item.id === start.countryId);
+        if (country) onSelectCountry(country);
+      }
+    }
+    if (pointers.current.size === 0) dragged.current = false;
+  };
+  const onWheel = (event: WheelEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom * Math.exp(-event.deltaY * .001));
+  };
+  const lod = view.zoom < .45 ? 0 : view.zoom < .95 ? 1 : 2;
+
+  const boundaryPaths = useMemo(() => {
+    const bySite = new Map(world.cells.map(cell => [cell.siteIndex, cell]));
+    const playerBorders: string[] = [];
+    const foreignBorders: string[] = [];
+    const coastlines: string[] = [];
+    for (const cell of world.cells) {
+      for (let index = 0; index < cell.points.length; index += 1) {
+        const a = cell.points[index], b = cell.points[(index + 1) % cell.points.length];
+        const path = "M" + a.x + " " + a.y + " L" + b.x + " " + b.y;
+        const adjacent = cell.neighbors.map(id => bySite.get(id)).find(candidate =>
+          candidate && candidate.points.some(point => Math.hypot(point.x - a.x, point.y - a.y) < .02) &&
+          candidate.points.some(point => Math.hypot(point.x - b.x, point.y - b.y) < .02));
+        if (!adjacent) { coastlines.push(path); continue; }
+        if (cell.owner === "player" && adjacent.owner !== "player") playerBorders.push(path);
+        if (cell.owner === "foreign" && adjacent.owner === "foreign" && adjacent.countryId !== cell.countryId) foreignBorders.push(path);
+      }
+    }
+    return { player: playerBorders.join(" "), foreign: foreignBorders.join(" "), coast: coastlines.join(" ") };
+  }, []);
+
+  return (
+    <div className="country-map fixed inset-0 z-0 h-dvh w-full touch-none select-none overflow-hidden"
+      onPointerDown={onPointerDown} onPointerMove={onPointerMove}
+      onPointerUp={event => finishPointer(event)} onPointerCancel={event => finishPointer(event, true)} onWheel={onWheel}>
+      <svg viewBox={`0 0 ${world.width} ${world.height}`} preserveAspectRatio="xMidYMid slice" className="h-full w-full">
+        <defs>
+          <radialGradient id="world-ocean"><stop stopColor="#102238"/><stop offset=".68" stopColor="#091321"/><stop offset="1" stopColor="#060911"/></radialGradient>
+          <pattern id="ocean-depth" width="250" height="210" patternUnits="userSpaceOnUse"><path d="M-30 75 Q45 8 125 75 T280 70 M-25 130 Q55 60 135 130 T285 125" fill="none" stroke="#527b94" strokeOpacity=".12" strokeWidth="2"/></pattern>
+        </defs>
+        <rect width={world.width} height={world.height} fill="url(#world-ocean)"/>
+        <rect width={world.width} height={world.height} fill="url(#ocean-depth)"/>
+        <g transform={`translate(${view.x} ${view.y}) translate(${world.width / 2} ${world.height / 2}) scale(${view.zoom}) translate(-${world.width / 2} -${world.height / 2})`}>
+          {world.cells.filter(cell => cell.owner === "foreign").map(cell => (
+            <path key={cell.id} data-country-id={cell.countryId} d={cell.path}
+              fill={selectedCountryId === cell.countryId ? "#263D53" : cell.fill}
+              stroke={cell.fill} strokeWidth="1.8" strokeLinejoin="round"/>
+          ))}
+          <path d={boundaryPaths.foreign} fill="none" stroke="#1E293B" strokeWidth="2.1" vectorEffect="non-scaling-stroke" pointerEvents="none"/>
+          <path d={boundaryPaths.coast} fill="none" stroke="#42647B" strokeOpacity=".7" strokeWidth="2.2" vectorEffect="non-scaling-stroke" pointerEvents="none"/>
+          {world.countries.map(country => (
+            <g key={country.id} pointerEvents="none">
+              {lod >= 1 || country.largest ? <text x={country.centroid.x} y={country.centroid.y} textAnchor="middle"
+                fill="#A8B5C7" opacity={lod === 0 ? ".32" : ".78"} fontSize="27" fontWeight="600" letterSpacing="2">{country.name.toUpperCase()}</text> : null}
+            </g>
+          ))}
+          {world.cells.filter(cell => cell.owner === "player").map(cell => (
+            <path key={cell.id} data-region-id={cell.id.replace("player-region-", "region-")} d={cell.path}
+              fill={activeId === cell.id.replace("player-region-", "region-") ? "#1E5268" : "#122E46"}
+              stroke="#2B6CB0" strokeWidth="1.4" strokeLinejoin="round"/>
+          ))}
+          <path d={boundaryPaths.player} fill="none" stroke="#38BDF8" strokeWidth="2.5" vectorEffect="non-scaling-stroke" pointerEvents="none"/>
+          {world.playerRegions.map((shape, index) => {
+            const region = regions[index]; if (!region) return null;
+            const capital = index === 4, city = shape.centroid;
+            return <g key={shape.id} pointerEvents="none">
+              {activeId === shape.id ? <path d={shape.path} fill="#2A6076" fillOpacity=".32" stroke="#7DD3FC" strokeWidth="2.5" vectorEffect="non-scaling-stroke"/> : null}
+              <circle cx={city.x} cy={city.y} r={capital ? 10 : 7} fill="#F5C96B" stroke="#FFF0B8" strokeWidth="2"/>
+              {capital ? <><circle cx={city.x} cy={city.y} r="16" fill="none" stroke="#F5C96B" strokeWidth="2.4" className="capital-ring"/><circle cx={city.x} cy={city.y} r="23" fill="none" stroke="#F5C96B" strokeOpacity=".7" strokeWidth="1.5" className="capital-ring capital-ring-delay"/></> : null}
+              {lod >= 2 || capital ? <text x={city.x} y={city.y + 18} textAnchor="middle" fill="#F8FAFC" fontSize="24" fontWeight="600"
+                stroke="#060911" strokeWidth="8" paintOrder="stroke">{region.city}</text> : null}
+            </g>;
+          })}
+        </g>
+      </svg>
+      <div className="map-controls absolute bottom-28 right-4 z-20 flex flex-col gap-2" onPointerDown={event => event.stopPropagation()}>
+        <button aria-label="Приблизить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom * 1.2)}><Plus/></button>
+        <button aria-label="Отдалить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom / 1.2)}><Minus/></button>
+        <button aria-label="Показать весь мир" onClick={() => applyView(0, 0, .25)}><LocateFixed/></button>
+      </div>
+      <div className="map-zoom-indicator absolute bottom-28 left-4 z-10">{Math.round(view.zoom * 100)}%</div>
+    </div>
+  );
 }
