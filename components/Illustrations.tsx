@@ -3,7 +3,7 @@
 import { useId, type CSSProperties } from "react";
 import { motion } from "framer-motion";
 
-export type IllustrationVariant = "industry" | "security" | "medical" | "government" | "projects";
+export type IllustrationVariant = "industry" | "security" | "medical" | "government" | "projects" | "economy" | "energy" | "regions" | "parliament" | "media" | "education" | "defense";
 
 interface Props {
   variant: IllustrationVariant;
@@ -17,6 +17,13 @@ const labels: Record<IllustrationVariant, { title: string; subtitle: string; acc
   medical: { title: "Медицинская сеть", subtitle: "ЗДОРОВЬЕ · СОЦИАЛЬНАЯ СФЕРА", accent: "#f08fba" },
   government: { title: "Государственный центр", subtitle: "УПРАВЛЕНИЕ · ИНСТИТУТЫ", accent: "#d9bd83" },
   projects: { title: "Национальные проекты", subtitle: "РАЗВИТИЕ · СТРОИТЕЛЬСТВО", accent: "#86d6a8" },
+  economy: { title: "Экономический штаб", subtitle: "БЮДЖЕТ · ИНВЕСТИЦИИ", accent: "#e9bd68" },
+  energy: { title: "Энергетическая сеть", subtitle: "ГЕНЕРАЦИЯ · МОЩНОСТЬ", accent: "#f2d36b" },
+  regions: { title: "Региональное развитие", subtitle: "ТЕРРИТОРИИ · ИНФРАСТРУКТУРА", accent: "#72d6a3" },
+  parliament: { title: "Парламентский зал", subtitle: "ЗАКОНОДАТЕЛЬСТВО · КОНСЕНСУС", accent: "#b7a0f2" },
+  media: { title: "Информационный центр", subtitle: "СВЯЗЬ · ОБЩЕСТВЕННОЕ МНЕНИЕ", accent: "#72c7ed" },
+  education: { title: "Образовательный контур", subtitle: "НАУКА · КАДРЫ", accent: "#a4a0f5" },
+  defense: { title: "Оборонный комплекс", subtitle: "ГОТОВНОСТЬ · СТРАТЕГИЯ", accent: "#75a9f4" },
 };
 
 export default function NationIllustration({ variant, className = "", compact = false }: Props) {
@@ -106,6 +113,13 @@ export default function NationIllustration({ variant, className = "", compact = 
             <path d="M91 81V57L113 45L135 57V81M102 81V65H124V81M145 81V58H158V81M147 58L151 51L156 58" fill={`url(#${id}-glass)`} stroke={item.accent} strokeOpacity=".7" />
           </g>
         )}
+        {variant === "economy" && (<g><path d="M30 76H150M42 76V51H65V76M75 76V37H98V76M108 76V24H131V76" stroke={item.accent} strokeWidth="2" fill={`url(#${id}-glass)`}/><path d="M37 43L66 34L88 40L121 18L145 25" stroke={item.accent} strokeWidth="2.5" strokeLinecap="round"/><path d="M137 18L145 25L134 28" stroke={item.accent} strokeWidth="2"/><circle cx="54" cy="22" r="10" stroke={item.accent}/><path d="M54 16V28M58 19H52C48 19 49 24 53 24H56C60 24 60 29 55 29H49" stroke={item.accent}/></g>)}
+        {variant === "energy" && (<g><path d="M28 81V51L47 39L66 51V81M35 57H59M35 66H59" stroke="#B9CFDC" strokeWidth="2"/><path d="M92 15L65 55H88L78 83L123 39H99L110 15H92Z" fill={gradient} stroke={item.accent} strokeWidth="2"/><path d="M132 81V47H157V81M137 47V34H152V47M144 34V24" stroke={item.accent} strokeWidth="2"/></g>)}
+        {variant === "regions" && (<g><path d="M27 35L66 20L93 35L129 19L161 34V74L126 86L91 72L59 86L27 70V35Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M66 20V60L91 72M93 35V72M129 19V60L161 74M27 52L59 65L93 51L129 60L161 48" stroke={item.accent} strokeOpacity=".8"/><circle cx="59" cy="48" r="4" fill={item.accent}/><circle cx="129" cy="43" r="4" fill={item.accent}/></g>)}
+        {variant === "parliament" && (<g><path d="M27 42L94 16L161 42H27Z" fill={`url(#${id}-metal)`} stroke={item.accent} strokeWidth="2"/><path d="M35 47H153V53H35ZM40 57V76M62 57V76M84 57V76M106 57V76M128 57V76M150 57V76M29 81H159" stroke={item.accent} strokeWidth="3" strokeLinecap="round"/><circle cx="94" cy="34" r="5" fill={item.accent}/></g>)}
+        {variant === "media" && (<g><path d="M47 35L137 35L151 49V78H39V43L47 35Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M55 49H111M55 59H132M55 69H99" stroke={item.accent} strokeWidth="2" strokeLinecap="round"/><path d="M30 27L94 10L158 27M94 10V35" stroke="#B9CFDC" strokeWidth="2"/><circle cx="94" cy="10" r="4" fill={item.accent}/></g>)}
+        {variant === "education" && (<g><path d="M24 40L94 13L164 40L94 68L24 40Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M53 52V70C77 88 111 88 135 70V52M164 40V69" stroke={item.accent} strokeWidth="2"/><path d="M84 34H104V51H84Z" stroke="#D8E8F5" strokeWidth="2"/><path d="M94 34V51" stroke={item.accent} strokeWidth="2"/></g>)}
+        {variant === "defense" && (<g><path d="M94 12L145 30V54C145 70 123 82 94 89C65 82 43 70 43 54V30L94 12Z" fill={`url(#${id}-glass)`} stroke={item.accent} strokeWidth="2"/><path d="M94 26L129 38V54C129 65 112 74 94 80C76 74 59 65 59 54V38L94 26Z" stroke="#D8E8F5" strokeOpacity=".65"/><path d="M94 34V67M78 50H110M83 40L105 62M105 40L83 62" stroke={item.accent} strokeWidth="2"/></g>)}
       </svg>
     </motion.div>
   );
