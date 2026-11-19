@@ -32,3 +32,12 @@
 .hud-glass{background:rgba(11,14,23,.82);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);box-shadow:0 16px 44px #0007,inset 0 1px #ffffff0b}.hud-kpis .kpi-card{background:rgba(11,14,23,.74);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(20px);box-shadow:0 10px 30px #0005}.country-map{background:#070a11;touch-action:none;cursor:grab}.country-map:active{cursor:grabbing}.country-map>svg{display:block;width:100%;height:100%}.capital-pulse{transform-box:fill-box;transform-origin:center;animation:capitalPulse 2.6s ease-out infinite}@media(max-height:700px){.hud-glass{padding-top:6px;padding-bottom:6px}}
 
 .country-map{background:#060911;touch-action:none;cursor:grab;will-change:transform}.country-map:active{cursor:grabbing}.country-map svg{display:block;width:100%;height:100%}.capital-ring{transform-box:fill-box;transform-origin:center;animation:capitalRing 2.7s ease-out infinite}.capital-ring-delay{animation-delay:1.35s}.map-zoom-indicator{border:1px solid #ffffff18;border-radius:999px;background:#0b1220c9;padding:6px 10px;color:#a7bacb;font-size:10px;font-variant-numeric:tabular-nums;backdrop-filter:blur(14px)}@keyframes capitalRing{0%{opacity:.85;transform:scale(.7)}100%{opacity:0;transform:scale(1.8)}}@media(prefers-reduced-motion:reduce){.capital-ring{animation:none}}
+
+
+/* Responsive economic dashboards and lightweight state feedback */
+.advisor-card{box-shadow:inset 0 1px 0 rgb(255 255 255 / .035)}
+.chart-path{transition:d 220ms ease,opacity 180ms ease,stroke-width 180ms ease}
+.chart-point{transition:cx 180ms ease,cy 180ms ease,r 180ms ease}
+.stat-card,.ministry-card,.action-primary,.action-secondary,.floating-dock button{transition:background-color 200ms ease,border-color 200ms ease,color 200ms ease,transform 200ms ease,opacity 200ms ease}
+.stat-card:active,.ministry-card:active{transform:scale(.995)}
+@media(prefers-reduced-motion:reduce){.chart-path,.chart-point,.stat-card,.ministry-card,.action-primary,.action-secondary,.floating-dock button{transition:none}}
