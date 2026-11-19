@@ -3,7 +3,7 @@ import {useEffect,useState} from "react";
 import { motion } from "framer-motion";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { toast } from "sonner";
-import {Banknote,Building2,Landmark,Map,RadioTower,RotateCcw,Zap,Shield,GraduationCap,Scale,HeartPulse,Briefcase,Globe2,Coins,MapPinned,Factory,Newspaper,ShieldCheck,Swords,Target} from "lucide-react";
+import {Banknote,Building2,Landmark,Map,RadioTower,RotateCcw,Zap,GraduationCap,Scale,HeartPulse,Briefcase,Globe2,Coins,MapPinned,Factory,Newspaper,ShieldCheck,Swords,Target} from "lucide-react";
 import CountryMap from "@/components/CountryMap";
 import BottomSheet from "@/components/Drawers/BottomSheet";
 import EconomyDrawer from "@/components/Drawers/EconomyDrawer";
@@ -63,7 +63,7 @@ export default function NationDashboard(){
        <span className="min-w-0 flex-1">
         <span className="flex min-w-0 items-start justify-between gap-2">
          <span className="min-w-0 whitespace-normal break-words text-sm font-semibold leading-snug text-slate-100">{m.name}</span>
-         <span className="shrink-0 whitespace-nowrap tabular-nums text-[11px] font-bold text-emerald-300">{m.performance}%</span>
+         <span className={`shrink-0 whitespace-nowrap tabular-nums text-[11px] font-bold ${performanceTone}`}>{m.performance}%</span>
         </span>
         <span className="mt-1 block text-[10px] text-slate-500">Эффективность ведомства</span>
        </span>
