@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
 import type { GameState } from "@/types/game";
 
@@ -23,6 +24,8 @@ export default function PresidentDrawer({
   onVoteLaw,
 }: Props) {
   const [address, setAddress] = useState("");
+  const [factionCardsRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
+  const [lawListRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
   const [section, setSection] = useState<"president" | "parliament">("president");
   const votes = game.parliament.factions.reduce(
     (sum, faction) => sum + (faction.seats * faction.loyalty) / 100,
@@ -159,8 +162,8 @@ export default function PresidentDrawer({
                 </div>
               ))}
             </div>
-            {game.parliament.factions.map((faction) => (
-              <div key={faction.id} className="mt-3 rounded-xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] p-3">
+            <div ref={factionCardsRef}>{game.parliament.factions.map((faction) => (
+              <div key={faction.id} className={`mt-3 rounded-xl border p-3 shadow-md ${faction.loyalty >= 60 ? "border-emerald-500/25 bg-gradient-to-br from-emerald-950/25 to-[#0D111A]" : "border-amber-500/20 bg-gradient-to-br from-amber-950/15 to-[#0D111A]"}`}>
                 <div className="flex justify-between text-xs">
                   <span>{faction.name} · {faction.seats} мест</span>
                   <b>{faction.loyalty}%</b>
@@ -184,10 +187,10 @@ export default function PresidentDrawer({
                   </button>
                 </div>
               </div>
-            ))}
+            ))}</div>
           </section>
 
-          <section className="rounded-xl border border-slate-700 p-3">
+          <section className={`rounded-xl border p-3 shadow-lg ${votes > 225 ? "border-emerald-500/35 bg-gradient-to-br from-emerald-950/35 to-[#0D111A] shadow-emerald-950/20" : "border-amber-500/25 bg-gradient-to-br from-amber-950/20 to-[#0D111A]"}`}>
             <div className="flex justify-between text-xs">
               <b>Голоса за законопроекты</b>
               <b className={votes > 225 ? "text-emerald-300" : "text-amber-300"}>
@@ -205,14 +208,14 @@ export default function PresidentDrawer({
             </p>
           </section>
 
-          {game.parliament.laws.map((law) => (
+          <div ref={lawListRef} className="space-y-2">{game.parliament.laws.map((law) => (
             <article
               key={law.id}
-              className="rounded-xl border border-slate-700 bg-slate-900/40 p-3"
+              className={`rounded-xl border p-3 shadow-md ${law.passed ? "border-emerald-500/30 bg-gradient-to-br from-emerald-950/35 to-[#0D111A]" : "border-white/10 bg-gradient-to-br from-[#182234] to-[#0D111A]"}`}
             >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <b className="text-xs">{law.name}</b>
+              <div className="flex min-w-0 items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <b className="break-words text-xs">{law.name}</b>
                   <p className="mt-1 text-[10px] text-slate-400">{law.description}</p>
                   <p className="mt-1 text-[10px] text-slate-500">Цена: {law.cost} млрд</p>
                 </div>
@@ -230,7 +233,7 @@ export default function PresidentDrawer({
                 </button>
               </div>
             </article>
-          ))}
+          ))}</div>
         </div>
       )}
         </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ReactNode } from "react";
 import { Plus, Wrench } from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
@@ -35,6 +36,7 @@ export default function IndustryDrawer({
   onRepair: () => void;
 }) {
   const [typeId, setType] = useState(game.enterpriseTypes[0]?.id ?? "");
+  const [enterpriseListRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
   const [regionId, setRegion] = useState(game.regions[0]?.id ?? "");
   const type = game.enterpriseTypes.find((item) => item.id === typeId);
   const region = game.regions.find((item) => item.id === regionId);
@@ -133,7 +135,7 @@ export default function IndustryDrawer({
       </select>
 
       {type ? (
-        <div className="stat-card mt-3 transition-all duration-200">
+        <div className="stat-card mt-3 border border-emerald-500/15 bg-gradient-to-br from-emerald-950/20 to-[#111925] transition-all duration-200">
           <strong>{type.name}</strong>
           <span>{type.description}</span>
           <span>Строительство: <b className="tabular-nums text-rose-400">−{cost.toFixed(1)} млрд</b></span>
@@ -156,7 +158,7 @@ export default function IndustryDrawer({
         <AdvisorCard tone={advisor.tone}>{advisor.text}</AdvisorCard>
       </div>
 
-      <div className="mt-3 space-y-2">
+      <div ref={enterpriseListRef} className="mt-3 space-y-2">
         {game.enterprises.map((enterprise) => (
           <div key={enterprise.id} className="stat-card transition-all duration-200">
             <div className="flex w-full items-center justify-between gap-2">

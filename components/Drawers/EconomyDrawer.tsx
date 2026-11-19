@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ReactNode } from "react";
 import { Factory, GraduationCap, Minus, Plus, Users, UserRound } from "lucide-react";
 import BottomSheet from "@/components/Drawers/BottomSheet";
@@ -49,6 +50,7 @@ export default function EconomyDrawer({
   onOpenEnergy: () => void;
 }) {
   const [tab, setTab] = useState<EconomyTab>("tax");
+  const [budgetListRef] = useAutoAnimate<HTMLDivElement>({ duration: 160 });
   const jobs = game.enterprises.reduce(
     (total, enterprise) =>
       total + (game.enterpriseTypes.find((type) => type.id === enterprise.typeId)?.jobs ?? 0),
@@ -261,10 +263,11 @@ export default function EconomyDrawer({
             <div className="mt-1 flex items-center justify-between gap-2"><p className="text-sm font-semibold text-slate-100">Чистый баланс</p><span className="whitespace-nowrap text-[9px] text-slate-500">МЛРД / Ч</span></div>
             <strong className={`mt-2 block text-2xl font-extrabold tabular-nums ${net >= 0 ? "text-emerald-300" : "text-rose-300"}`}>{net >= 0 ? "+" : "−"}{formatMoney(Math.abs(net))}</strong>
           </div>
+          <div ref={budgetListRef} className="space-y-2">
           {budgetRows.map((row) => {
             const good = row.positive;
             return (
-              <div key={row.label} className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.07] bg-gradient-to-b from-[#131926] to-[#0D111A] px-3 py-3 shadow-md transition-all duration-200">
+              <div key={row.label} className={`flex min-w-0 items-center justify-between gap-3 rounded-xl border px-3 py-3 shadow-md transition-all duration-200 ${good ? "border-emerald-500/15 bg-gradient-to-r from-emerald-950/25 to-[#111925]" : "border-rose-500/15 bg-gradient-to-r from-rose-950/20 to-[#111925]"}`}>
                 <span className="min-w-0 flex-1 text-xs font-semibold text-slate-300">{row.label}</span>
                 <div className="flex shrink-0 flex-col items-end gap-1">
                   <strong className={`whitespace-nowrap text-xs tabular-nums ${good ? "text-emerald-300" : "text-rose-300"}`}>{good ? "+" : "−"}{formatMoney(Math.abs(row.value))}</strong>
@@ -273,6 +276,7 @@ export default function EconomyDrawer({
               </div>
             );
           })}
+          </div>
           <AdvisorCard title="Чистый бюджетный поток" tone={net >= 0 ? "positive" : "warning"}>
             {net >= 0
               ? `Положительный баланс ${net.toFixed(2)} млрд/ч. Сохраняйте резерв и направляйте свободный поток в проекты с высокой отдачей.`

@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { motion } from "framer-motion";
 import { LocateFixed, Minus, Plus } from "lucide-react";
 import type { PointerEvent, WheelEvent } from "react";
 import type { ForeignCountry, Region } from "@/types/game";
@@ -174,7 +172,7 @@ export default function CountryMap({
           })}
         </g>
       </svg>
-      <div className="absolute left-1/2 top-[258px] z-20 flex -translate-x-1/2 rounded-xl border border-slate-600 bg-slate-950/90 p-1 shadow-lg" onPointerDown={event => event.stopPropagation()}><motion.button type="button" whileTap={{ scale: 0.97 }} onClick={() => setMapMode("political")} className={`relative rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "political" ? "text-white" : "text-slate-400"}`}>{mapMode === "political" ? <motion.span layoutId="map-mode-indicator" className="absolute inset-0 rounded-lg bg-cyan-600" transition={{ type: "spring", stiffness: 420, damping: 34 }} /> : null}<span className="relative z-10">Политическая</span></motion.button><motion.button type="button" whileTap={{ scale: 0.97 }} onClick={() => setMapMode("relations")} className={`relative rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "relations" ? "text-white" : "text-slate-400"}`}>{mapMode === "relations" ? <motion.span layoutId="map-mode-indicator" className="absolute inset-0 rounded-lg bg-emerald-700" transition={{ type: "spring", stiffness: 420, damping: 34 }} /> : null}<span className="relative z-10">Отношения</span></motion.button></div>
+      <div className="absolute left-1/2 top-[258px] z-20 flex -translate-x-1/2 rounded-xl border border-slate-600 bg-slate-950/90 p-1 shadow-lg" onPointerDown={event => event.stopPropagation()}><button type="button" onClick={() => setMapMode("political")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "political" ? "bg-cyan-600 text-white" : "text-slate-400"}`}>Политическая</button><button type="button" onClick={() => setMapMode("relations")} className={`rounded-lg px-3 py-2 text-[10px] font-bold ${mapMode === "relations" ? "bg-emerald-700 text-white" : "text-slate-400"}`}>Отношения</button></div>
       {mapMode === "relations" ? <div className="absolute left-1/2 top-[304px] z-20 -translate-x-1/2 rounded-lg border border-slate-700 bg-slate-950/85 px-3 py-1.5 text-[9px] text-slate-300"><div className="mb-1 flex justify-between"><span>−100</span><span>0</span><span>+100</span></div><div className="h-2 w-44 rounded-full" style={{ background: "linear-gradient(90deg, #ef4444 0%, #94a3b8 50%, #10b981 100%)" }} /></div> : null}
       <div className="map-controls absolute bottom-28 right-4 z-20 flex flex-col gap-2" onPointerDown={event => event.stopPropagation()}>
         <button aria-label="Приблизить" onClick={() => applyView(viewRef.current.x, viewRef.current.y, viewRef.current.zoom * 1.2)}><Plus/></button>

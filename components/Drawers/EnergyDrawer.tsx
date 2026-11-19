@@ -26,7 +26,7 @@ export default function EnergyDrawer({
   return (
     <BottomSheet title="Энергетика" onClose={onClose}>
       <div className="grid grid-cols-2 gap-2">
-        <div className="stat-card flex flex-col gap-1">
+        <div className="stat-card min-w-0 flex flex-col gap-1 bg-gradient-to-br from-[#1b2a39] to-[#111925]">
           <span>Генерация</span>
           <strong>{game.energy.generationGW.toFixed(1)} ГВт</strong>
         </div>
@@ -36,7 +36,7 @@ export default function EnergyDrawer({
         </div>
         <div className="stat-card flex flex-col gap-1">
           <span>Баланс</span>
-          <strong className={balance >= 0 ? "text-emerald-300" : "text-red-300"}>
+          <strong className={`tabular-nums ${balance >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
             {balance >= 0 ? "+" : ""}{balance.toFixed(1)} ГВт
           </strong>
         </div>
@@ -51,7 +51,7 @@ export default function EnergyDrawer({
           <strong>{coverage.toFixed(0)}%</strong>
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-700">
-          <div className="h-full rounded-full bg-emerald-400" style={{ width: `${coverage}%` }} />
+          <div className={`h-full rounded-full transition-all duration-300 ${coverage >= 100 ? "bg-gradient-to-r from-emerald-500 to-cyan-300 shadow-[0_0_12px_rgba(52,211,153,.4)]" : "bg-gradient-to-r from-rose-500 to-amber-300"}`} style={{ width: `${coverage}%` }} />
         </div>
       </div>
       <button

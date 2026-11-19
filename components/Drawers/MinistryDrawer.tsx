@@ -41,7 +41,7 @@ export default function MinistryDrawer({
 
   return (
     <BottomSheet title={ministry.name} onClose={onClose}>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid min-w-0 grid-cols-2 gap-3">
         <div className="stat-card flex flex-col gap-1">
           <span>Уровень ведомства</span>
           <strong className="tabular-nums">{ministry.level}</strong>
